@@ -14,6 +14,10 @@ import SmartAnalytics from '@/components/smart-analytics';
 import HabitSuggestions from '@/components/habit-suggestions';
 import TimeTracker from '@/components/time-tracker';
 import GoalBreakdown from '@/components/goal-breakdown';
+import AICoach from '@/components/ai-coach';
+import FinancialStakes from '@/components/financial-stakes';
+import TeamGoals from '@/components/team-goals';
+import VoiceCommands from '@/components/voice-commands';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -237,6 +241,14 @@ export default function Dashboard() {
               completions={completions || []}
               daysRemaining={daysRemaining}
             />
+            
+            {/* AI Coach */}
+            <AICoach 
+              goalName={goal.name}
+              currentStreak={streak?.currentStreak || 0}
+              completions={completions || []}
+              daysRemaining={daysRemaining}
+            />
           </div>
 
           {/* Sidebar */}
@@ -253,6 +265,27 @@ export default function Dashboard() {
               goalName={goal.name}
               currentStreak={streak?.currentStreak || 0}
               completions={completions || []}
+            />
+            
+            {/* Financial Stakes */}
+            <FinancialStakes 
+              goalId={currentGoalId}
+              goalName={goal.name}
+              daysRemaining={daysRemaining}
+            />
+            
+            {/* Team Goals */}
+            <TeamGoals 
+              goalId={currentGoalId}
+              goalName={goal.name}
+              isOwner={true}
+            />
+            
+            {/* Voice Commands */}
+            <VoiceCommands 
+              goalId={currentGoalId}
+              onMarkComplete={() => markDayCompleteMutation.mutate()}
+              onAddNote={(note) => console.log('Note:', note)}
             />
             
             <StreakTracker streak={streak || null} completions={completions} />
