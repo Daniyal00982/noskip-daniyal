@@ -15,12 +15,30 @@ import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import type { Goal, Streak, DailyCompletion } from '@shared/schema';
 
-const motivationalQuotes = [
-  { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
-  { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
-  { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-  { text: "The harder you work for something, the greater you'll feel when you achieve it.", author: "Anonymous" },
+const POWER_MOTIVATIONAL_QUOTES = [
+  { text: "Every second you waste scrolling, someone else is building their empire. YOUR TIME IS RUNNING OUT!", author: "Reality Check", intensity: "critical" },
+  { text: "While you're making excuses, your competition is making MILLIONS. WAKE UP!", author: "Success Mindset", intensity: "critical" },
+  { text: "POVERTY is waiting for you if you don't ACT NOW. Your family deserves BETTER!", author: "Financial Freedom", intensity: "urgent" },
+  { text: "You're ONE decision away from a completely different life. CHOOSE GREATNESS TODAY!", author: "Life Transformation", intensity: "critical" },
+  { text: "Your future self is BEGGING you to stop being lazy. DON'T DISAPPOINT THEM!", author: "Future You", intensity: "urgent" },
+  { text: "Every day you don't work on your goal, you're choosing to stay BROKE and AVERAGE.", author: "Wealth Mindset", intensity: "critical" },
+  { text: "STOP scrolling and START BUILDING! Your dreams won't create themselves!", author: "Action Taker", intensity: "urgent" },
+  { text: "Rich people work while poor people make excuses. WHICH ONE ARE YOU?", author: "Mindset Shift", intensity: "critical" },
+  { text: "Your goal isn't just a wish - it's your ESCAPE PLAN from mediocrity!", author: "Success Strategy", intensity: "urgent" },
+  { text: "The pain of discipline weighs ounces. The pain of regret weighs TONS!", author: "Discipline Master", intensity: "critical" },
+  { text: "You're not tired, you're UNINSPIRED. Find your WHY and DOMINATE!", author: "Motivation Beast", intensity: "urgent" },
+  { text: "Every minute wasted on social media is a minute stolen from your SUCCESS!", author: "Time Master", intensity: "critical" }
+];
+
+const SUCCESS_COMPLETION_QUOTES = [
+  "🔥 THAT'S THE SPIRIT! Rich people have this EXACT discipline!",
+  "💪 BOOM! You just did what 90% of people CAN'T DO!",
+  "⚡ SUCCESS ENERGY! You're building MILLIONAIRE habits!",
+  "🚀 UNSTOPPABLE! This is how LEGENDS are made!",
+  "👑 KING/QUEEN MOVES! Your future self is PROUD!",
+  "💎 DIAMOND MENTALITY! You're becoming UNBREAKABLE!",
+  "🏆 CHAMPION MINDSET! This is your PATH to GREATNESS!",
+  "🔥 ON FIRE! Every completion brings you closer to WEALTH!"
 ];
 
 export default function Dashboard() {
@@ -49,9 +67,10 @@ export default function Dashboard() {
       return response.json();
     },
     onSuccess: () => {
+      const randomSuccessQuote = SUCCESS_COMPLETION_QUOTES[Math.floor(Math.random() * SUCCESS_COMPLETION_QUOTES.length)];
       toast({
-        title: "Day Completed! 🎉",
-        description: "Great job! Keep the momentum going.",
+        title: "🎯 DAY CRUSHED! UNSTOPPABLE! 🚀",
+        description: randomSuccessQuote,
       });
       queryClient.invalidateQueries({ queryKey: ['/api/streaks', currentGoalId] });
       queryClient.invalidateQueries({ queryKey: ['/api/completions', currentGoalId] });
@@ -90,10 +109,10 @@ export default function Dashboard() {
     return { daysRemaining, progressPercentage: Math.round(progressPercentage), isCompletedToday };
   }, [goal, completions]);
 
-  const dailyQuote = useMemo(() => {
+  const dailyPowerQuote = useMemo(() => {
     const today = new Date().toDateString();
     const hash = today.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    return motivationalQuotes[hash % motivationalQuotes.length];
+    return POWER_MOTIVATIONAL_QUOTES[hash % POWER_MOTIVATIONAL_QUOTES.length];
   }, []);
 
   if (goalLoading) {
@@ -135,6 +154,24 @@ export default function Dashboard() {
       />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* POWER MOTIVATIONAL QUOTE - TOP PRIORITY PLACEMENT */}
+        <div className={`rounded-3xl p-8 text-white border-4 mb-8 text-center transform hover:scale-[1.02] transition-all duration-300 ${
+          dailyPowerQuote.intensity === 'critical' 
+            ? 'bg-gradient-to-r from-red-600 via-red-700 to-red-800 border-red-300 animate-pulse shadow-red-500/30 shadow-2xl' 
+            : 'bg-gradient-to-r from-orange-600 via-orange-700 to-orange-800 border-orange-300 shadow-orange-500/30 shadow-2xl'
+        }`}>
+          <div className="flex justify-center items-center mb-6">
+            <div className="text-6xl mr-4">⚡</div>
+            <h2 className="font-black text-3xl uppercase tracking-wide">
+              {dailyPowerQuote.intensity === 'critical' ? '🚨 WAKE UP CALL! 🚨' : '💪 POWER BOOST! 💪'}
+            </h2>
+            <div className="text-6xl ml-4">⚡</div>
+          </div>
+          <blockquote className="text-3xl font-black leading-tight mb-6 max-w-4xl mx-auto">
+            "{dailyPowerQuote.text}"
+          </blockquote>
+          <cite className="block text-green-200 text-lg font-bold">- {dailyPowerQuote.author}</cite>
+        </div>
         {/* Goal Header */}
         <div className="bg-gradient-primary rounded-3xl p-8 text-white mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
@@ -170,9 +207,9 @@ export default function Dashboard() {
                 <Button
                   onClick={() => markDayCompleteMutation.mutate()}
                   disabled={markDayCompleteMutation.isPending || isCompletedToday}
-                  className="w-full bg-secondary hover:bg-green-600 text-white py-4 px-6 rounded-xl font-bold text-lg transform hover:scale-[1.02] transition-all duration-200 shadow-lg"
+                  className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-6 px-8 rounded-2xl font-black text-xl transform hover:scale-[1.05] transition-all duration-300 shadow-2xl border-4 border-green-400 animate-pulse"
                 >
-                  {isCompletedToday ? '✅ Today Completed!' : markDayCompleteMutation.isPending ? 'Marking...' : '✅ Mark Today as Done'}
+                  {isCompletedToday ? '🔥 CRUSHED TODAY! UNSTOPPABLE! 🔥' : markDayCompleteMutation.isPending ? '⚡ DOMINATING...' : '💪 DOMINATE TODAY! CRUSH IT! 🚀'}
                 </Button>
               </div>
             </div>
@@ -191,14 +228,7 @@ export default function Dashboard() {
             {/* Leaderboard with Social Pressure */}
             <Leaderboard goalId={currentGoalId} currentStreak={streak?.currentStreak || 0} />
 
-            {/* Motivational Quote */}
-            <div className="bg-gradient-secondary rounded-2xl p-6 text-white">
-              <h3 className="font-bold mb-4">💫 Daily Motivation</h3>
-              <blockquote className="text-lg italic">
-                "{dailyQuote.text}"
-              </blockquote>
-              <cite className="block text-green-100 mt-2 text-sm">- {dailyQuote.author}</cite>
-            </div>
+
 
             <StreakTracker streak={streak || null} completions={completions} />
 

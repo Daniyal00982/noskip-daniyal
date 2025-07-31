@@ -26,8 +26,8 @@ export default function SetupGoal() {
     onSuccess: (data) => {
       setCurrentGoalId(data.id);
       toast({
-        title: "Goal Created!",
-        description: "Your journey starts now. Let's make it happen!",
+        title: "🚀 GOAL LOCKED IN! UNSTOPPABLE MODE ACTIVATED!",
+        description: "Your empire starts NOW! Time to DOMINATE and make MILLIONS! 💪",
       });
       setLocation('/dashboard');
     },
@@ -136,9 +136,9 @@ export default function SetupGoal() {
               <Button
                 type="submit"
                 disabled={createGoalMutation.isPending}
-                className="w-full bg-gradient-primary text-white py-4 px-8 rounded-xl font-bold text-lg hover:opacity-90 transform hover:scale-[1.02] transition-all duration-200 shadow-lg"
+                className="w-full bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 text-white py-6 px-8 rounded-2xl font-black text-2xl hover:scale-[1.05] transform transition-all duration-300 shadow-2xl border-4 border-yellow-400 animate-pulse"
               >
-                {createGoalMutation.isPending ? 'Creating Your Journey...' : '🚀 Start My Journey'}
+                {createGoalMutation.isPending ? '⚡ ACTIVATING BEAST MODE...' : '🔥 DOMINATE LIFE! START NOW! 💪'}
               </Button>
             </form>
           </CardContent>

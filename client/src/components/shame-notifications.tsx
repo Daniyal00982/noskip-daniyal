@@ -52,7 +52,7 @@ const MOTIVATIONAL_SHAME = [
 ];
 
 export function ShameNotifications(props: ShameNotificationsProps) {
-  const [activeShame, setActiveShame] = useState<typeof SHAME_MESSAGES[0] | null>(null);
+  const [activeShame, setActiveShame] = useState<ReturnType<typeof getShameMessages>[0] | null>(null);
   const [lastShameDate, setLastShameDate] = useLocalStorage('lastShameDate', '');
   const [shameCount, setShameCount] = useLocalStorage('dailyShameCount', 0);
 

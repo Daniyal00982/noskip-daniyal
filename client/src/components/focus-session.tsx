@@ -10,6 +10,17 @@ interface FocusSessionProps {
   goalId: string;
 }
 
+const FOCUS_POWER_QUOTES = [
+  "🚀 MILLIONAIRES don't get distracted. FOCUS or stay BROKE!",
+  "⚡ Every second of focus is a second closer to WEALTH!",
+  "🔥 Your competition is FOCUSED while you're distracted!",
+  "💰 RICH people focus. POOR people get distracted. CHOOSE!",
+  "🎯 This session could change your ENTIRE LIFE. DON'T WASTE IT!",
+  "⏰ TIME is the ONLY thing you can't buy back. FOCUS NOW!",
+  "💎 Diamonds are made under PRESSURE. Focus under PRESSURE!",
+  "🏆 Champions FOCUS when others quit. BE A CHAMPION!"
+];
+
 export function FocusSession({ goalId }: FocusSessionProps) {
   const [isActive, setIsActive] = useState(false);
   const [duration, setDuration] = useState(5); // Start with 5 minutes for ADHD-friendly
@@ -33,9 +44,10 @@ export function FocusSession({ goalId }: FocusSessionProps) {
     },
     onSuccess: (data) => {
       setCurrentSessionId(data.id);
+      const randomQuote = FOCUS_POWER_QUOTES[Math.floor(Math.random() * FOCUS_POWER_QUOTES.length)];
       toast({
-        title: "🎯 Focus Session Started!",
-        description: "Lock in! Your future self is watching.",
+        title: "🎯 FOCUS MODE ACTIVATED!",
+        description: randomQuote,
       });
     },
   });
