@@ -5,7 +5,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import SetupGoal from "@/pages/setup-goal";
 import Dashboard from "@/pages/dashboard";
-import Coach from "@/pages/coach";
 import NotFound from "@/pages/not-found";
 
 function Navigation() {
@@ -14,7 +13,6 @@ function Navigation() {
   const navItems = [
     { path: "/setup", label: "Setup" },
     { path: "/dashboard", label: "Dashboard" },
-    { path: "/coach", label: "Coach" },
   ];
 
   return (
@@ -52,7 +50,6 @@ function Router() {
     <Switch>
       <Route path="/setup" component={SetupGoal} />
       <Route path="/dashboard" component={Dashboard} />
-      <Route path="/coach" component={Coach} />
       <Route path="/" component={Dashboard} />
       <Route component={NotFound} />
     </Switch>

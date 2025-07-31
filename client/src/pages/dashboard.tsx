@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { CountdownTimer } from '@/components/countdown-timer';
 import { StreakTracker } from '@/components/streak-tracker';
-import { BrutalCoach } from '@/components/brutal-coach';
 import { DailyNotification } from '@/components/daily-notification';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { apiRequest } from '@/lib/queryClient';
@@ -165,7 +164,6 @@ export default function Dashboard() {
             </div>
 
             <CountdownTimer goalDeadline={goal.deadline ? new Date(goal.deadline) : undefined} />
-            <BrutalCoach goalId={currentGoalId} compact />
           </div>
 
           {/* Sidebar */}
