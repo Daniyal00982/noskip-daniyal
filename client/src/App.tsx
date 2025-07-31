@@ -62,11 +62,14 @@ function Router() {
 }
 
 function App() {
+  const [location] = useLocation();
+  const isSetupPage = location === '/setup';
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="min-h-screen bg-background">
-          <Navigation />
+          {!isSetupPage && <Navigation />}
           <Router />
         </div>
         <Toaster />
