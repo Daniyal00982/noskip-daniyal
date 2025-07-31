@@ -77,72 +77,80 @@ export default function SetupGoal() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-hero py-12">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4">
-            What's Your <span className="text-primary">Big Goal</span>?
+    <div className="min-h-screen bg-gradient-premium py-16">
+      <div className="max-w-4xl mx-auto px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <div className="text-8xl mb-8 animate-luxury-pulse">👑</div>
+          <h1 className="text-5xl sm:text-7xl font-black text-gradient-luxury mb-8 uppercase tracking-wide">
+            BUILD YOUR <span className="text-gradient-gold">EMPIRE</span>
           </h1>
-          <p className="text-xl text-gray-600">Define your mission and start your transformation journey today.</p>
+          <p className="text-2xl text-gray-300 font-medium max-w-3xl mx-auto leading-relaxed">Every billionaire started with one crystal-clear goal. What's your path to greatness?</p>
         </div>
 
-        <Card className="rounded-3xl shadow-xl">
-          <CardContent className="p-8 sm:p-12">
-            <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="bg-gradient-card glass-effect rounded-3xl premium-shadow border border-white/10">
+          <div className="p-12 sm:p-16">
+            <form onSubmit={handleSubmit} className="space-y-12">
               <div>
-                <Label htmlFor="goalName" className="text-sm font-semibold text-gray-900 mb-3 block">
-                  Goal Name *
+                <Label htmlFor="goalName" className="text-xl font-bold text-gradient-luxury mb-6 block uppercase tracking-wide flex items-center">
+                  <span className="text-2xl mr-3">🎯</span>
+                  EMPIRE MISSION *
                 </Label>
                 <Input
                   id="goalName"
                   type="text"
-                  placeholder="e.g. Launch my startup, Get fit, Learn coding..."
+                  placeholder="Launch billion-dollar startup, Build my empire, Master the game..."
                   value={goalName}
                   onChange={(e) => setGoalName(e.target.value)}
-                  className="px-4 py-4 text-lg rounded-xl"
+                  className="px-8 py-6 text-xl rounded-2xl bg-black/20 border-white/20 text-white placeholder-gray-400 font-medium"
                   disabled={createGoalMutation.isPending}
+                  data-testid="input-goal-name"
                 />
               </div>
 
               <div>
-                <Label htmlFor="deadline" className="text-sm font-semibold text-gray-900 mb-3 block">
-                  Deadline *
+                <Label htmlFor="deadline" className="text-xl font-bold text-gradient-luxury mb-6 block uppercase tracking-wide flex items-center">
+                  <span className="text-2xl mr-3">⏰</span>
+                  EMPIRE DEADLINE *
                 </Label>
                 <Input
                   id="deadline"
                   type="date"
                   value={deadline}
                   onChange={(e) => setDeadline(e.target.value)}
-                  className="px-4 py-4 text-lg rounded-xl"
+                  className="px-8 py-6 text-xl rounded-2xl bg-black/20 border-white/20 text-white font-medium"
                   disabled={createGoalMutation.isPending}
+                  data-testid="input-deadline"
                 />
               </div>
 
               <div>
-                <Label htmlFor="reason" className="text-sm font-semibold text-gray-900 mb-3 block">
-                  Why is this important? (Optional)
+                <Label htmlFor="reason" className="text-xl font-bold text-gradient-luxury mb-6 block uppercase tracking-wide flex items-center">
+                  <span className="text-2xl mr-3">🔥</span>
+                  YOUR WHY (OPTIONAL)
                 </Label>
                 <Textarea
                   id="reason"
-                  rows={4}
-                  placeholder="This will fuel your motivation on tough days..."
+                  rows={6}
+                  placeholder="What drives you? Why do you DESERVE this success? What will achieving this change about your life?"
                   value={reason}
                   onChange={(e) => setReason(e.target.value)}
-                  className="px-4 py-4 text-lg rounded-xl resize-none"
+                  className="px-8 py-6 text-lg rounded-2xl resize-none bg-black/20 border-white/20 text-white placeholder-gray-400 font-medium"
                   disabled={createGoalMutation.isPending}
+                  data-testid="input-reason"
                 />
               </div>
 
               <Button
                 type="submit"
                 disabled={createGoalMutation.isPending}
-                className="w-full bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 text-white py-6 px-8 rounded-2xl font-black text-2xl hover:scale-[1.05] transform transition-all duration-300 shadow-2xl border-4 border-yellow-400 animate-pulse"
+                className="w-full btn-luxury py-8 px-12 rounded-3xl text-2xl font-black uppercase tracking-wider transform hover:scale-[1.02] transition-all duration-300 luxury-glow"
+                data-testid="button-create-goal"
               >
-                {createGoalMutation.isPending ? '⚡ ACTIVATING BEAST MODE...' : '🔥 DOMINATE LIFE! START NOW! 💪'}
+                {createGoalMutation.isPending ? '👑 BUILDING EMPIRE...' : '💎 BUILD MY EMPIRE NOW 💎'}
               </Button>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

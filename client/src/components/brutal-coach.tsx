@@ -46,34 +46,39 @@ export function BrutalCoach({ goalId, compact = false }: BrutalCoachProps) {
 
   if (compact) {
     return (
-      <div className="bg-white rounded-2xl p-8 shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">💪 Brutal Coach</h2>
+      <div className="bg-gradient-card glass-effect rounded-3xl p-10 premium-shadow border border-white/10">
+        <div className="flex items-center mb-8">
+          <span className="text-3xl mr-4">🏆</span>
+          <h2 className="text-2xl font-bold text-gradient-luxury uppercase tracking-wide">ELITE COACH</h2>
+        </div>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           {lastResponse && (
-            <div className="bg-red-50 border-l-4 border-red-500 rounded-xl p-4">
-              <p className="text-red-800 font-medium italic">"{lastResponse}"</p>
-              <div className="text-sm text-red-600 mt-2">- Your Brutal Coach</div>
+            <div className="bg-gradient-luxury p-6 rounded-2xl border border-white/20">
+              <p className="text-black font-bold text-lg italic">"{lastResponse}"</p>
+              <div className="text-sm text-black/80 mt-3 font-semibold uppercase tracking-wide">- YOUR ELITE COACH</div>
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="flex space-x-3">
+          <form onSubmit={handleSubmit} className="flex space-x-4">
             <Input
               value={message}
               onChange={(e) => setMessage(e.target.value)}
-              placeholder="How are you feeling today?"
-              className="flex-1"
+              placeholder="Share your empire vision..."
+              className="flex-1 bg-black/20 border-white/20 text-white placeholder-gray-400 py-4 px-6 rounded-2xl font-medium"
               disabled={coachMutation.isPending}
+              data-testid="input-coach-message"
             />
             <Button 
               type="submit"
               disabled={!message.trim() || coachMutation.isPending}
-              className="bg-red-500 hover:bg-red-600 text-white px-6 font-semibold"
+              className="btn-luxury px-8 font-bold uppercase tracking-wide"
+              data-testid="button-ask-coach"
             >
-              {coachMutation.isPending ? 'Coaching...' : 'Ask Coach'}
+              {coachMutation.isPending ? 'COACHING...' : 'GET ELITE ADVICE'}
             </Button>
           </form>
-          <p className="text-xs text-gray-500">Get tough love motivation powered by AI</p>
+          <p className="text-sm text-gray-400 font-medium">Elite AI coaching for empire builders</p>
         </div>
       </div>
     );
@@ -81,36 +86,43 @@ export function BrutalCoach({ goalId, compact = false }: BrutalCoachProps) {
 
   // Full coach interface for dedicated page
   return (
-    <div className="bg-white rounded-3xl shadow-xl p-8">
-      <div className="space-y-6 mb-8 max-h-96 overflow-y-auto">
+    <div className="bg-gradient-card glass-effect rounded-3xl premium-shadow p-12 border border-white/10">
+      <div className="flex items-center mb-10">
+        <span className="text-5xl mr-6">👑</span>
+        <h1 className="text-4xl font-black text-gradient-luxury uppercase tracking-wide">ELITE COACHING SESSION</h1>
+      </div>
+
+      <div className="space-y-8 mb-12 max-h-96 overflow-y-auto">
         {lastResponse && (
           <div className="flex justify-start">
-            <div className="bg-red-500 text-white rounded-2xl rounded-bl-none p-4 max-w-xs">
-              <p className="font-semibold">Your Brutal Coach says:</p>
-              <p className="mt-1">{lastResponse}</p>
+            <div className="bg-gradient-luxury text-black rounded-3xl rounded-bl-none p-8 max-w-2xl">
+              <p className="font-bold text-xl mb-2 uppercase tracking-wide">Your Elite Coach:</p>
+              <p className="text-lg font-medium leading-relaxed">{lastResponse}</p>
             </div>
           </div>
         )}
       </div>
 
-      <div className="border-t pt-6">
-        <form onSubmit={handleSubmit} className="flex space-x-4">
+      <div className="border-t border-white/20 pt-8">
+        <form onSubmit={handleSubmit} className="flex space-x-6">
           <Input
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Tell your coach how you're really feeling..."
-            className="flex-1 px-6 py-4 text-lg rounded-2xl"
+            placeholder="Share your empire vision and challenges..."
+            className="flex-1 px-8 py-6 text-xl rounded-3xl bg-black/20 border-white/20 text-white placeholder-gray-400 font-medium"
             disabled={coachMutation.isPending}
+            data-testid="input-coach-message-full"
           />
           <Button
             type="submit"
             disabled={!message.trim() || coachMutation.isPending}
-            className="bg-red-500 hover:bg-red-600 text-white px-8 py-4 rounded-2xl font-bold shadow-lg"
+            className="btn-luxury px-12 py-6 rounded-3xl text-xl font-black uppercase tracking-wider luxury-glow"
+            data-testid="button-send-message"
           >
-            {coachMutation.isPending ? '⏳' : '✈️'}
+            {coachMutation.isPending ? '👑 COACHING...' : '💎 GET ELITE ADVICE'}
           </Button>
         </form>
-        <p className="text-sm text-gray-500 mt-2">⚡ Powered by AI for maximum motivation</p>
+        <p className="text-lg text-gray-400 mt-4 font-medium text-center">Powered by AI for elite empire builders</p>
       </div>
     </div>
   );

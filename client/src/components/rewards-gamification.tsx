@@ -87,35 +87,35 @@ export function RewardsGamification({ goalId, currentStreak }: RewardsGamificati
   const progressToNext = nextLevelThreshold > 0 ? (totalPoints / nextLevelThreshold) * 100 : 100;
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-lg border-2 border-purple-200">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-900 flex items-center">
-          <Star className="mr-2 text-purple-500" />
-          Rewards & Level
+    <div className="bg-gradient-card glass-effect rounded-3xl p-8 premium-shadow border border-white/10">
+      {/* Elite Header */}
+      <div className="flex items-center justify-between mb-8">
+        <h3 className="text-2xl font-bold text-gradient-luxury flex items-center uppercase tracking-wide">
+          <span className="text-3xl mr-3">💎</span>
+          ELITE STATUS
         </h3>
-        <div className="flex items-center space-x-2">
-          <Coins className="text-yellow-500" size={20} />
-          <span className="text-xl font-bold text-yellow-600">{totalPoints}</span>
+        <div className="flex items-center space-x-3 bg-gradient-luxury rounded-2xl px-6 py-3">
+          <span className="text-2xl">🏆</span>
+          <span className="text-2xl font-black text-black">{totalPoints}</span>
         </div>
       </div>
 
-      {/* User Level */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-4 mb-6">
-        <div className="flex items-center justify-between mb-3">
+      {/* Elite Level Status */}
+      <div className="bg-black/20 rounded-2xl p-8 mb-8 border border-white/10">
+        <div className="flex items-center justify-between mb-6">
           <div>
-            <div className="flex items-center">
-              <Crown className={`mr-2 ${userLevel.color}`} size={20} />
-              <span className={`text-lg font-bold ${userLevel.color}`}>
-                Level {userLevel.level}: {userLevel.title}
+            <div className="flex items-center mb-2">
+              <span className="text-4xl mr-3">👑</span>
+              <span className={`text-2xl font-black uppercase tracking-wide text-gradient-gold`}>
+                LEVEL {userLevel.level}: {userLevel.title}
               </span>
             </div>
-            <p className="text-sm text-gray-600">
-              {nextLevelThreshold - totalPoints} points to next level
+            <p className="text-lg text-gray-300 font-medium">
+              {nextLevelThreshold - totalPoints} points to empire expansion
             </p>
           </div>
         </div>
-        <Progress value={Math.min(100, progressToNext)} className="h-3" />
+        <Progress value={Math.min(100, progressToNext)} className="h-4 bg-black/30 luxury-glow" />
       </div>
 
       {/* Available Rewards */}

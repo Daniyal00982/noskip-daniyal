@@ -11,31 +11,40 @@ function Navigation() {
   const [location] = useLocation();
 
   const navItems = [
-    { path: "/setup", label: "Setup" },
-    { path: "/dashboard", label: "Dashboard" },
+    { path: "/setup", label: "Setup", icon: "⚡" },
+    { path: "/dashboard", label: "Dashboard", icon: "💎" },
   ];
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="glass-effect sticky top-0 z-50 border-b border-white/10">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
           <div className="flex items-center">
-            <Link href="/dashboard" className="text-xl font-bold text-gray-900 hover:text-primary transition-colors">
-              MotivateMe
+            <Link 
+              href="/dashboard" 
+              className="text-2xl font-bold text-gradient-luxury hover:scale-105 transition-all duration-300"
+              data-testid="link-home"
+            >
+              ELITEMOTIVE
             </Link>
+            <div className="ml-4 px-3 py-1 bg-gradient-luxury rounded-full text-xs font-bold text-black uppercase tracking-wider">
+              PREMIUM
+            </div>
           </div>
-          <div className="flex space-x-8">
+          <div className="flex items-center space-x-1">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
-                className={`transition-colors duration-200 ${
+                data-testid={`link-${item.label.toLowerCase()}`}
+                className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center space-x-2 ${
                   location === item.path
-                    ? "text-primary font-semibold"
-                    : "text-gray-700 hover:text-primary"
+                    ? "bg-gradient-luxury text-black luxury-glow transform scale-105"
+                    : "text-gray-300 hover:text-white hover:bg-white/5"
                 }`}
               >
-                {item.label}
+                <span className="text-lg">{item.icon}</span>
+                <span className="uppercase tracking-wide text-sm">{item.label}</span>
               </Link>
             ))}
           </div>
@@ -60,7 +69,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-premium">
           <Navigation />
           <Router />
         </div>
