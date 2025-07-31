@@ -117,10 +117,10 @@ export default function Dashboard() {
 
   if (goalLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-premium">
-        <div className="text-center glass-effect p-12 rounded-3xl premium-shadow">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-primary mx-auto mb-6 luxury-glow"></div>
-          <p className="text-xl text-gray-300 font-medium">Loading your empire...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -128,17 +128,16 @@ export default function Dashboard() {
 
   if (!goal) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-premium px-4">
-        <div className="text-center glass-effect p-16 rounded-3xl premium-shadow max-w-2xl">
-          <div className="text-8xl mb-8 animate-luxury-pulse">💎</div>
-          <h2 className="text-4xl font-bold text-gradient-luxury mb-6">BUILD YOUR EMPIRE</h2>
-          <p className="text-xl text-gray-300 mb-12 leading-relaxed">Every billionaire started with one goal. What's yours going to be?</p>
+      <div className="min-h-screen flex items-center justify-center px-4">
+        <div className="text-center card-minimal p-16 max-w-2xl">
+          <h2 className="text-3xl font-bold text-gold mb-4">Create Your Goal</h2>
+          <p className="text-muted-foreground mb-8">Set a clear objective and start making progress.</p>
           <Button 
             onClick={() => window.location.href = '/setup'}
-            className="btn-luxury text-xl px-12 py-6 rounded-2xl font-bold uppercase tracking-wider"
+            className="btn-premium px-8 py-3"
             data-testid="button-setup-goal"
           >
-            🚀 CREATE FIRST GOAL
+            Get Started
           </Button>
         </div>
       </div>
@@ -149,49 +148,26 @@ export default function Dashboard() {
     <div className="min-h-screen py-8">
       <DailyNotification daysRemaining={daysRemaining} goalName={goal.name} />
       
-      {/* Shame & Social Pressure System */}
-      <ShameNotifications
-        goalName={goal.name}
-        daysRemaining={daysRemaining}
-        currentStreak={streak?.currentStreak || 0}
-        consecutiveSkips={0} // Will be connected to real data
-        socialMediaMinutes={120} // Will be connected to real screen time data
-      />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* LUXURY MOTIVATIONAL QUOTE */}
-        <div className={`bg-gradient-card glass-effect rounded-3xl p-12 text-white border border-white/20 mb-12 text-center transform hover:scale-[1.02] transition-all duration-300 premium-shadow ${
-          dailyPowerQuote.intensity === 'critical' 
-            ? 'luxury-glow animate-luxury-pulse' 
-            : 'gold-glow'
-        }`}>
-          <div className="flex justify-center items-center mb-8">
-            <div className="text-8xl mr-6 animate-bounce">💎</div>
-            <h2 className="font-black text-4xl uppercase tracking-wider text-gradient-luxury">
-              {dailyPowerQuote.intensity === 'critical' ? 'ELITE MINDSET' : 'LUXURY MINDSET'}
-            </h2>
-            <div className="text-8xl ml-6 animate-bounce">💎</div>
-          </div>
-          <blockquote className="text-3xl font-bold leading-tight mb-8 max-w-5xl mx-auto text-gray-200">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Daily Quote */}
+        <div className="card-minimal p-8 mb-8 text-center">
+          <blockquote className="text-lg font-medium leading-relaxed mb-4 text-foreground">
             "{dailyPowerQuote.text}"
           </blockquote>
-          <cite className="block text-gradient-gold text-xl font-bold uppercase tracking-wide">- {dailyPowerQuote.author}</cite>
+          <cite className="text-muted-foreground text-sm">— {dailyPowerQuote.author}</cite>
         </div>
-        {/* Elite Goal Header */}
-        <div className="bg-gradient-luxury rounded-3xl p-12 text-black mb-12 premium-shadow border border-white/20">
+        {/* Goal Header */}
+        <div className="card-minimal p-8 mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div className="flex-1">
-              <div className="flex items-center mb-4">
-                <div className="text-4xl mr-4">🏆</div>
-                <h1 className="text-4xl sm:text-5xl font-black uppercase tracking-wide">{goal.name}</h1>
-              </div>
+              <h1 className="text-3xl font-bold text-gold mb-2">{goal.name}</h1>
               {goal.reason && (
-                <p className="text-black/80 text-xl font-medium italic">{goal.reason}</p>
+                <p className="text-muted-foreground">{goal.reason}</p>
               )}
             </div>
-            <div className="mt-6 sm:mt-0 text-right bg-black/20 rounded-2xl p-6">
-              <div className="text-5xl font-black text-white">{daysRemaining}</div>
-              <div className="text-white/80 text-sm uppercase tracking-wider font-bold">DAYS TO EMPIRE</div>
+            <div className="mt-4 sm:mt-0 text-right">
+              <div className="text-3xl font-bold text-gold">{daysRemaining}</div>
+              <div className="text-muted-foreground text-sm">days remaining</div>
             </div>
           </div>
         </div>
@@ -199,29 +175,26 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Elite Progress Section */}
-            <div className="bg-gradient-card glass-effect rounded-3xl p-10 premium-shadow border border-white/10">
-              <div className="flex items-center mb-8">
-                <div className="text-3xl mr-4">📊</div>
-                <h2 className="text-3xl font-bold text-gradient-luxury uppercase tracking-wide">EMPIRE PROGRESS</h2>
-              </div>
+            {/* Progress Section */}
+            <div className="card-minimal p-8">
+              <h2 className="text-xl font-semibold text-gold mb-6">Progress</h2>
               
-              <div className="space-y-8">
-                <div className="bg-black/20 rounded-2xl p-6">
-                  <div className="flex justify-between items-center mb-4">
-                    <span className="text-lg font-bold text-gray-300 uppercase tracking-wide">Mission Progress</span>
-                    <span className="text-2xl font-black text-gradient-gold">{progressPercentage}%</span>
+              <div className="space-y-6">
+                <div>
+                  <div className="flex justify-between items-center mb-3">
+                    <span className="text-sm font-medium text-muted-foreground">Time Elapsed</span>
+                    <span className="text-sm font-semibold text-gold">{progressPercentage}%</span>
                   </div>
-                  <Progress value={progressPercentage} className="h-4 bg-black/30" />
+                  <Progress value={progressPercentage} className="h-2" />
                 </div>
 
                 <Button
                   onClick={() => markDayCompleteMutation.mutate()}
                   disabled={markDayCompleteMutation.isPending || isCompletedToday}
-                  className="w-full btn-luxury py-8 px-12 rounded-3xl text-2xl font-black uppercase tracking-wider transform hover:scale-[1.02] transition-all duration-300 luxury-glow"
+                  className="w-full btn-premium py-4"
                   data-testid="button-complete-day"
                 >
-                  {isCompletedToday ? '💎 EMPIRE EXPANDED TODAY! 💎' : markDayCompleteMutation.isPending ? '⚡ BUILDING EMPIRE...' : '🚀 EXPAND EMPIRE TODAY! 🚀'}
+                  {isCompletedToday ? 'Completed Today' : markDayCompleteMutation.isPending ? 'Completing...' : 'Mark Complete'}
                 </Button>
               </div>
             </div>

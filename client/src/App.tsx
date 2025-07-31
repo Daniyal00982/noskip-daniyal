@@ -11,40 +11,36 @@ function Navigation() {
   const [location] = useLocation();
 
   const navItems = [
-    { path: "/setup", label: "Setup", icon: "⚡" },
-    { path: "/dashboard", label: "Dashboard", icon: "💎" },
+    { path: "/setup", label: "Setup" },
+    { path: "/dashboard", label: "Dashboard" },
   ];
 
   return (
-    <nav className="glass-effect sticky top-0 z-50 border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+    <nav className="card-minimal sticky top-0 z-50 border-b border-border">
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link 
               href="/dashboard" 
-              className="text-2xl font-bold text-gradient-luxury hover:scale-105 transition-all duration-300"
+              className="text-xl font-bold text-gold hover:opacity-80 transition-opacity"
               data-testid="link-home"
             >
-              ELITEMOTIVE
+              MOTIVATE
             </Link>
-            <div className="ml-4 px-3 py-1 bg-gradient-luxury rounded-full text-xs font-bold text-black uppercase tracking-wider">
-              PREMIUM
-            </div>
           </div>
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
                 data-testid={`link-${item.label.toLowerCase()}`}
-                className={`px-6 py-3 rounded-2xl font-semibold transition-all duration-300 flex items-center space-x-2 ${
+                className={`text-sm font-medium transition-colors ${
                   location === item.path
-                    ? "bg-gradient-luxury text-black luxury-glow transform scale-105"
-                    : "text-gray-300 hover:text-white hover:bg-white/5"
+                    ? "text-gold"
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span className="uppercase tracking-wide text-sm">{item.label}</span>
+                {item.label}
               </Link>
             ))}
           </div>
@@ -69,7 +65,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="min-h-screen bg-gradient-premium">
+        <div className="min-h-screen bg-background">
           <Navigation />
           <Router />
         </div>
