@@ -44,15 +44,108 @@ export default function DailyJournal({ goalId, date = new Date() }: DailyJournal
     localStorage.setItem(`journal_${goalId}_${dateKey}_reflection`, todayReflection);
   };
 
+  // Smart AI-powered activity categorization
+  const smartCategorizeActivity = (activity: string): 'work' | 'personal' | 'health' | 'learning' | 'social' | 'break' => {
+    const activityLower = activity.toLowerCase();
+    
+    // Work patterns
+    if (activityLower.includes('meeting') || activityLower.includes('project') || 
+        activityLower.includes('coding') || activityLower.includes('email') ||
+        activityLower.includes('presentation') || activityLower.includes('java') ||
+        activityLower.includes('programming') || activityLower.includes('development') ||
+        activityLower.includes('work') || activityLower.includes('office')) {
+      return 'work';
+    }
+    
+    // Learning patterns
+    if (activityLower.includes('reading') || activityLower.includes('study') ||
+        activityLower.includes('tutorial') || activityLower.includes('course') ||
+        activityLower.includes('learn') || activityLower.includes('practice') ||
+        activityLower.includes('book') || activityLower.includes('video')) {
+      return 'learning';
+    }
+    
+    // Health patterns
+    if (activityLower.includes('exercise') || activityLower.includes('gym') ||
+        activityLower.includes('walk') || activityLower.includes('run') ||
+        activityLower.includes('yoga') || activityLower.includes('meditation') ||
+        activityLower.includes('workout') || activityLower.includes('fitness')) {
+      return 'health';
+    }
+    
+    // Social patterns
+    if (activityLower.includes('call') || activityLower.includes('chat') ||
+        activityLower.includes('friend') || activityLower.includes('family') ||
+        activityLower.includes('social') || activityLower.includes('party') ||
+        activityLower.includes('dinner') || activityLower.includes('hangout')) {
+      return 'social';
+    }
+    
+    // Break patterns
+    if (activityLower.includes('break') || activityLower.includes('lunch') ||
+        activityLower.includes('rest') || activityLower.includes('nap') ||
+        activityLower.includes('relax') || activityLower.includes('netflix') ||
+        activityLower.includes('sleep') || activityLower.includes('tv')) {
+      return 'break';
+    }
+    
+    return 'personal';
+  };
+
+  // Smart productivity prediction based on activity
+  const predictProductivity = (activity: string, hour: number): number => {
+    const activityLower = activity.toLowerCase();
+    
+    // High productivity activities
+    if (activityLower.includes('coding') || activityLower.includes('programming') ||
+        activityLower.includes('project') || activityLower.includes('deep work') ||
+        activityLower.includes('focused') || activityLower.includes('study')) {
+      return Math.min(5, Math.max(3, 4 + (hour >= 9 && hour <= 11 ? 1 : 0)));
+    }
+    
+    // Medium productivity activities
+    if (activityLower.includes('meeting') || activityLower.includes('planning') ||
+        activityLower.includes('email') || activityLower.includes('reading')) {
+      return 3;
+    }
+    
+    // Low productivity activities
+    if (activityLower.includes('break') || activityLower.includes('lunch') ||
+        activityLower.includes('social') || activityLower.includes('netflix')) {
+      return Math.max(1, 3 - (hour >= 14 && hour <= 16 ? 1 : 0));
+    }
+    
+    return 3; // Default
+  };
+
+  // Smart energy prediction
+  const predictEnergy = (hour: number, productivity: number): number => {
+    // Morning energy boost
+    if (hour >= 6 && hour <= 10) return Math.min(5, productivity + 1);
+    
+    // Afternoon dip
+    if (hour >= 14 && hour <= 16) return Math.max(1, productivity - 1);
+    
+    // Evening decline
+    if (hour >= 19) return Math.max(1, productivity - 1);
+    
+    return productivity;
+  };
+
   const saveHourlyEntry = () => {
     if (selectedHour !== null && activityInput.trim()) {
+      // Auto-suggest smart values if user hasn't changed them from defaults
+      const smartCategory = smartCategorizeActivity(activityInput);
+      const smartProductivity = predictProductivity(activityInput, selectedHour);
+      const smartEnergy = predictEnergy(selectedHour, smartProductivity);
+
       const newEntry: HourlyEntry = {
         hour: selectedHour,
         activity: activityInput.trim(),
         feeling: selectedFeeling,
-        productivity: selectedProductivity,
-        energy: selectedEnergy,
-        category: selectedCategory
+        productivity: selectedProductivity === 3 ? smartProductivity : selectedProductivity,
+        energy: selectedEnergy === 3 ? smartEnergy : selectedEnergy,
+        category: selectedCategory === 'work' ? smartCategory : selectedCategory
       };
       
       const updatedLog = hourlyLog.filter(entry => entry.hour !== selectedHour);
@@ -69,6 +162,40 @@ export default function DailyJournal({ goalId, date = new Date() }: DailyJournal
       setSelectedEnergy(3);
       setSelectedCategory('work');
     }
+  };
+
+  // Smart suggestions for next hour
+  const getSmartSuggestions = (currentHour: number): string[] => {
+    const recentEntries = hourlyLog.filter(entry => entry.hour >= currentHour - 3 && entry.hour < currentHour);
+    const lastEntry = recentEntries[recentEntries.length - 1];
+    
+    const suggestions: string[] = [];
+    
+    // Time-based suggestions
+    if (currentHour >= 6 && currentHour <= 9) {
+      suggestions.push("Morning routine", "Exercise", "Planning the day", "Deep work session");
+    } else if (currentHour >= 12 && currentHour <= 13) {
+      suggestions.push("Lunch break", "Quick walk", "Meal with colleagues");
+    } else if (currentHour >= 14 && currentHour <= 16) {
+      suggestions.push("Light tasks", "Meetings", "Email responses", "Admin work");
+    } else if (currentHour >= 17 && currentHour <= 19) {
+      suggestions.push("Wrap up work", "Review day", "Personal time");
+    } else if (currentHour >= 20) {
+      suggestions.push("Relaxation", "Reading", "Family time", "Preparing for tomorrow");
+    }
+    
+    // Pattern-based suggestions
+    if (lastEntry) {
+      if (lastEntry.category === 'work' && lastEntry.productivity >= 4) {
+        suggestions.push("Continue focused work", "Take a short break", "Tackle another important task");
+      } else if (lastEntry.energy <= 2) {
+        suggestions.push("Take a break", "Go for a walk", "Have a healthy snack");
+      } else if (lastEntry.category === 'break') {
+        suggestions.push("Get back to work", "Start a new task", "Check priorities");
+      }
+    }
+    
+    return suggestions.slice(0, 4);
   };
 
   const currentHour = new Date().getHours();
@@ -201,6 +328,33 @@ export default function DailyJournal({ goalId, date = new Date() }: DailyJournal
           })}
         </div>
 
+        {/* Smart Suggestions */}
+        {currentHour < 24 && (
+          <div className="journal-glass p-4 mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Zap className="w-4 h-4 text-yellow-400" />
+              <span className="text-sm font-medium text-white/90">SMART SUGGESTIONS FOR {getHourDisplay(currentHour)}</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {getSmartSuggestions(currentHour).map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    setSelectedHour(currentHour);
+                    setActivityInput(suggestion);
+                    setSelectedCategory(smartCategorizeActivity(suggestion));
+                    setSelectedProductivity(predictProductivity(suggestion, currentHour));
+                    setSelectedEnergy(predictEnergy(currentHour, predictProductivity(suggestion, currentHour)));
+                  }}
+                  className="p-2 text-xs text-left rounded-lg bg-white/5 hover:bg-white/10 text-white/80 hover:text-white transition-all"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Enhanced Hour Entry Form */}
         {selectedHour !== null && (
           <div className="journal-glass p-6 space-y-5">
@@ -208,9 +362,12 @@ export default function DailyJournal({ goalId, date = new Date() }: DailyJournal
               <div className="w-8 h-8 journal-glass rounded-lg flex items-center justify-center">
                 <Clock className="w-4 h-4 text-white" />
               </div>
-              <div>
+              <div className="flex-1">
                 <h4 className="text-white font-medium">Log Activity for {getHourDisplay(selectedHour)}</h4>
                 <p className="text-white/60 text-xs">Capture what you did and how you felt</p>
+              </div>
+              <div className="text-xs text-white/60">
+                🤖 AI Auto-suggestions enabled
               </div>
             </div>
 
@@ -219,11 +376,23 @@ export default function DailyJournal({ goalId, date = new Date() }: DailyJournal
                 <label className="text-xs font-medium text-white/80 block mb-2">ACTIVITY DESCRIPTION</label>
                 <Textarea
                   value={activityInput}
-                  onChange={(e) => setActivityInput(e.target.value)}
+                  onChange={(e) => {
+                    setActivityInput(e.target.value);
+                    // Auto-suggest category as user types
+                    if (e.target.value.trim() && selectedCategory === 'work') {
+                      setSelectedCategory(smartCategorizeActivity(e.target.value));
+                    }
+                  }}
                   placeholder="What did you do during this hour? Be specific and mindful..."
                   className="journal-glass text-white placeholder:text-white/40 border-0 bg-transparent p-3 text-sm"
                   rows={3}
                 />
+                {activityInput.trim() && selectedCategory === smartCategorizeActivity(activityInput) && (
+                  <div className="mt-1 text-xs text-green-400 flex items-center gap-1">
+                    <Zap className="w-3 h-3" />
+                    Auto-categorized as {smartCategorizeActivity(activityInput)}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

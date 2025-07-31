@@ -19,6 +19,8 @@ import FinancialStakes from '@/components/financial-stakes';
 import TeamGoals from '@/components/team-goals';
 import VoiceCommands from '@/components/voice-commands';
 import DailyJournal from '@/components/daily-journal';
+import JournalAnalytics from '@/components/journal-analytics';
+import GoalIntegrationViz from '@/components/goal-integration-viz';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -200,9 +202,18 @@ export default function Dashboard() {
                 <p className="text-muted-foreground text-sm">{goal.reason}</p>
               )}
             </div>
-            <div className="mt-4 sm:mt-0 text-right">
-              <div className="text-2xl font-bold text-foreground">{daysRemaining}</div>
-              <div className="text-muted-foreground text-xs tracking-wide">DAYS LEFT</div>
+            <div className="flex items-center gap-4">
+              <Button
+                onClick={() => window.location.href = '/setup'}
+                variant="outline"
+                className="btn-outline text-sm px-4 py-2"
+              >
+                + Add New Goal
+              </Button>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-foreground">{daysRemaining}</div>
+                <div className="text-muted-foreground text-xs tracking-wide">DAYS LEFT</div>
+              </div>
             </div>
           </div>
         </div>
@@ -234,6 +245,14 @@ export default function Dashboard() {
         {/* Daily Time Journal - Full Width */}
         <div className="mb-8">
           <DailyJournal goalId={currentGoalId} />
+        </div>
+
+        {/* Analytics & Goal Integration */}
+        <div className="mb-8">
+          <div className="responsive-grid lg:grid-cols-2 gap-6">
+            <JournalAnalytics goalId={currentGoalId} goalName={goal.name} />
+            <GoalIntegrationViz goalId={currentGoalId} goalName={goal.name} daysRemaining={daysRemaining} />
+          </div>
         </div>
 
         {/* Core Features - Horizontal Scroll on Mobile */}
