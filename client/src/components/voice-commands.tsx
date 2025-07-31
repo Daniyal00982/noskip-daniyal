@@ -1,158 +1,321 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Mic, MicOff, Volume2 } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Mic, MicOff, Volume2, Sparkles, MessageCircle, CheckCircle, Target } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface VoiceCommandsProps {
-  goalId: string;
-  onMarkComplete: () => void;
-  onAddNote: (note: string) => void;
+  isListening?: boolean;
+  onToggleListening?: () => void;
+  onCommand?: (command: string, data: any) => void;
 }
 
-export default function VoiceCommands({ goalId, onMarkComplete, onAddNote }: VoiceCommandsProps) {
-  const [isListening, setIsListening] = useState(false);
-  const [lastCommand, setLastCommand] = useState('');
-  const [recognition, setRecognition] = useState<any>(null);
+interface Command {
+  pattern: RegExp;
+  action: string;
+  description: string;
+  example: string;
+}
+
+const voiceCommands: Command[] = [
+  {
+    pattern: /mark.*day.*complete|completed.*today|done.*today/i,
+    action: 'MARK_COMPLETE',
+    description: 'Mark today as complete',
+    example: '"Mark today as complete" or "I completed today"'
+  },
+  {
+    pattern: /add.*journal.*entry|journal.*(.+)|note.*(.+)/i,
+    action: 'ADD_JOURNAL',
+    description: 'Add journal entry',
+    example: '"Add journal entry: Had a productive morning"'
+  },
+  {
+    pattern: /talk.*coach|ask.*coach|coach.*help/i,
+    action: 'OPEN_COACH',
+    description: 'Open AI coach',
+    example: '"Talk to coach" or "Ask coach for help"'
+  },
+  {
+    pattern: /share.*progress|share.*goal|post.*social/i,
+    action: 'SHARE_PROGRESS',
+    description: 'Share progress on social media',
+    example: '"Share my progress" or "Post to social media"'
+  },
+  {
+    pattern: /show.*analytics|view.*stats|check.*progress/i,
+    action: 'SHOW_ANALYTICS',
+    description: 'View analytics and statistics',
+    example: '"Show analytics" or "Check my progress"'
+  },
+  {
+    pattern: /create.*team.*goal|start.*team|join.*team/i,
+    action: 'CREATE_TEAM',
+    description: 'Create or join team goal',
+    example: '"Create team goal" or "Start team challenge"'
+  }
+];
+
+export default function VoiceCommands({ isListening = false, onToggleListening, onCommand }: VoiceCommandsProps) {
+  const [isSupported, setIsSupported] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [confidence, setConfidence] = useState(0);
+  const [lastCommand, setLastCommand] = useState<string | null>(null);
+  const [showCommands, setShowCommands] = useState(false);
+  const recognitionRef = useRef<any>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Check if browser supports speech recognition
-    if (typeof window !== 'undefined' && 'webkitSpeechRecognition' in window) {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition;
-      const recognitionInstance = new SpeechRecognition();
+    // Check if speech recognition is supported
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setIsSupported(true);
+      recognitionRef.current = new SpeechRecognition();
       
-      recognitionInstance.continuous = false;
-      recognitionInstance.interimResults = false;
-      recognitionInstance.lang = 'en-US';
+      // Configure recognition
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.lang = 'en-US';
 
-      recognitionInstance.onresult = (event: any) => {
-        const command = event.results[0][0].transcript.toLowerCase();
-        setLastCommand(command);
-        handleVoiceCommand(command);
+      // Event handlers
+      recognitionRef.current.onresult = (event: any) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          const confidence = event.results[i][0].confidence;
+
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+            setConfidence(confidence);
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+
+        setTranscript(finalTranscript || interimTranscript);
+
+        // Process final transcript for commands
+        if (finalTranscript) {
+          processCommand(finalTranscript);
+        }
       };
 
-      recognitionInstance.onend = () => {
-        setIsListening(false);
+      recognitionRef.current.onerror = (event: any) => {
+        console.error('Speech recognition error:', event.error);
+        toast({
+          title: "Voice Recognition Error",
+          description: "Please check your microphone permissions and try again.",
+          variant: "destructive"
+        });
       };
 
-      setRecognition(recognitionInstance);
+      recognitionRef.current.onend = () => {
+        if (isListening) {
+          // Restart recognition if still listening
+          try {
+            recognitionRef.current.start();
+          } catch (error) {
+            console.error('Failed to restart recognition:', error);
+          }
+        }
+      };
     }
-  }, []);
 
-  const handleVoiceCommand = (command: string) => {
-    if (command.includes('mark complete') || command.includes('done') || command.includes('completed')) {
-      onMarkComplete();
-      speak('Goal marked as complete');
-    } else if (command.includes('add note') || command.includes('note')) {
-      const note = command.replace(/add note|note/g, '').trim();
-      if (note) {
-        onAddNote(note);
-        speak('Note added');
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
       }
-    } else if (command.includes('status') || command.includes('progress')) {
-      speak('Check your dashboard for current progress');
+    };
+  }, [isListening]);
+
+  useEffect(() => {
+    if (!isSupported || !recognitionRef.current) return;
+
+    if (isListening) {
+      try {
+        recognitionRef.current.start();
+        toast({
+          title: "Voice Commands Active",
+          description: "Listening for your commands...",
+        });
+      } catch (error) {
+        console.error('Failed to start recognition:', error);
+      }
     } else {
-      speak('Command not recognized');
+      recognitionRef.current.stop();
+    }
+  }, [isListening, isSupported]);
+
+  const processCommand = (text: string) => {
+    const command = voiceCommands.find(cmd => cmd.pattern.test(text));
+    
+    if (command) {
+      setLastCommand(command.action);
+      onCommand?.(command.action, { text, transcript: text });
+      
+      toast({
+        title: "Command Recognized!",
+        description: `Executing: ${command.description}`,
+      });
+
+      // Auto-clear after 3 seconds
+      setTimeout(() => setLastCommand(null), 3000);
+    } else if (text.length > 10) {
+      toast({
+        title: "Command not recognized",
+        description: "Try saying 'Show voice commands' for help.",
+        variant: "destructive"
+      });
     }
   };
 
-  const speak = (text: string) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      utterance.pitch = 1;
-      window.speechSynthesis.speak(utterance);
+  const handleToggleListening = () => {
+    if (!isSupported) {
+      toast({
+        title: "Voice Commands Not Supported",
+        description: "Your browser doesn't support voice recognition.",
+        variant: "destructive"
+      });
+      return;
     }
+    onToggleListening?.();
   };
 
-  const startListening = () => {
-    if (recognition) {
-      setIsListening(true);
-      recognition.start();
-    }
-  };
-
-  const stopListening = () => {
-    if (recognition) {
-      recognition.stop();
-      setIsListening(false);
-    }
-  };
-
-  if (!recognition) {
+  if (!isSupported) {
     return (
-      <div className="card-premium p-6">
-        <div className="text-center">
-          <div className="text-xs text-muted-foreground">
+      <Card className="card-premium border-muted/30">
+        <CardContent className="p-4 text-center">
+          <MicOff className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+          <p className="text-sm text-muted-foreground">
             Voice commands not supported in this browser
-          </div>
-        </div>
-      </div>
+          </p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="card-premium p-4">
-      <div className="flex items-center gap-2 mb-3">
-        <Volume2 className="w-4 h-4 text-foreground" />
-        <h3 className="text-sm font-semibold text-foreground tracking-tight">Voice Commands</h3>
-        <Badge variant="outline" className="text-muted-foreground border-border text-xs">
-          BETA
-        </Badge>
-      </div>
-
-      <div className="space-y-4">
-        {/* Voice Control Button */}
-        <div className="text-center">
+    <div className="space-y-4">
+      {/* Voice Control Button */}
+      <div className="flex items-center gap-3">
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
           <Button
-            onClick={isListening ? stopListening : startListening}
-            className={`w-16 h-16 rounded-full ${isListening ? 'bg-destructive hover:bg-destructive/90' : 'btn-premium'}`}
+            onClick={handleToggleListening}
+            variant={isListening ? "default" : "outline"}
+            size="lg"
+            className={`relative overflow-hidden ${
+              isListening 
+                ? "bg-red-500 hover:bg-red-600 text-white" 
+                : "bg-transparent border-2 border-yellow-400/30 hover:border-yellow-400/50"
+            }`}
           >
-            {isListening ? (
-              <MicOff className="w-6 h-6" />
-            ) : (
-              <Mic className="w-6 h-6" />
+            <motion.div
+              animate={isListening ? { scale: [1, 1.2, 1] } : {}}
+              transition={{ duration: 1, repeat: Infinity }}
+            >
+              {isListening ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+            </motion.div>
+            <span className="ml-2">
+              {isListening ? "Stop Listening" : "Start Voice Commands"}
+            </span>
+            
+            {/* Pulse animation when listening */}
+            {isListening && (
+              <motion.div
+                className="absolute inset-0 bg-red-400/20 rounded"
+                animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              />
             )}
           </Button>
-          <div className="text-xs text-muted-foreground mt-2">
-            {isListening ? 'Listening...' : 'Tap to speak'}
-          </div>
-        </div>
+        </motion.div>
 
-        {/* Last Command */}
-        {lastCommand && (
-          <div className="p-3 bg-muted/50 rounded">
-            <div className="text-xs font-medium text-foreground mb-1">Last Command:</div>
-            <div className="text-xs text-muted-foreground">"{lastCommand}"</div>
-          </div>
-        )}
-
-        {/* Available Commands */}
-        <div>
-          <div className="text-xs font-medium text-muted-foreground tracking-wide mb-2">AVAILABLE COMMANDS</div>
-          <div className="space-y-2">
-            <div className="text-xs">
-              <span className="font-medium text-foreground">"Mark complete"</span>
-              <span className="text-muted-foreground"> - Mark today as done</span>
-            </div>
-            <div className="text-xs">
-              <span className="font-medium text-foreground">"Add note [text]"</span>
-              <span className="text-muted-foreground"> - Add a note</span>
-            </div>
-            <div className="text-xs">
-              <span className="font-medium text-foreground">"Status"</span>
-              <span className="text-muted-foreground"> - Check progress</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Siri Shortcut Info */}
-        <div className="p-3 border border-border rounded">
-          <div className="text-xs font-medium text-foreground mb-1">iOS Shortcut</div>
-          <div className="text-xs text-muted-foreground">
-            Say "Hey Siri, mark my goal complete" to quickly update from anywhere
-          </div>
-        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowCommands(!showCommands)}
+          className="text-muted-foreground hover:text-foreground"
+        >
+          <Volume2 className="w-4 h-4 mr-1" />
+          Commands
+        </Button>
       </div>
+
+      {/* Live Transcript */}
+      <AnimatePresence>
+        {isListening && transcript && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="journal-glass p-4 rounded-2xl"
+          >
+            <div className="flex items-start gap-3">
+              <motion.div
+                animate={{ scale: [1, 1.1, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+                className="text-yellow-400 mt-1"
+              >
+                <Mic className="w-4 h-4" />
+              </motion.div>
+              <div className="flex-1">
+                <p className="text-sm text-muted-foreground mb-1">
+                  Listening... {confidence > 0 && `(${Math.round(confidence * 100)}% confidence)`}
+                </p>
+                <p className="text-foreground font-medium">{transcript}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Last Command Feedback */}
+      <AnimatePresence>
+        {lastCommand && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className="flex items-center gap-2 text-sm text-green-400"
+          >
+            <CheckCircle className="w-4 h-4" />
+            Command executed: {lastCommand.replace('_', ' ').toLowerCase()}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Available Commands */}
+      <AnimatePresence>
+        {showCommands && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="journal-glass p-4 rounded-2xl space-y-3"
+          >
+            <h4 className="font-medium text-foreground flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-yellow-400" />
+              Available Voice Commands
+            </h4>
+            <div className="space-y-2">
+              {voiceCommands.map((command, index) => (
+                <div key={index} className="text-sm">
+                  <p className="text-foreground font-medium">{command.description}</p>
+                  <p className="text-muted-foreground text-xs italic">
+                    Say: {command.example}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

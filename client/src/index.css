@@ -517,3 +517,26 @@ html {
     inset 0 1px 0 rgba(255, 255, 255, 0.08),
     0 0 0 2px rgba(255, 255, 255, 0.1);
 }
+
+/* Onboarding highlight effect */
+.onboarding-highlight {
+  position: relative;
+  z-index: 102;
+  border-radius: 8px;
+  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.4), 0 0 20px rgba(250, 204, 21, 0.3);
+  animation: onboarding-pulse 2s ease-in-out infinite;
+}
+
+@keyframes onboarding-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.4), 0 0 20px rgba(250, 204, 21, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(250, 204, 21, 0.6), 0 0 30px rgba(250, 204, 21, 0.5);
+  }
+}
+
+/* Gradient radial utility */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}

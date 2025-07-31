@@ -15,15 +15,17 @@ import HabitSuggestions from '@/components/habit-suggestions';
 import TimeTracker from '@/components/time-tracker';
 import GoalBreakdown from '@/components/goal-breakdown';
 import AICoach from '@/components/ai-coach';
-import FinancialStakes from '@/components/financial-stakes';
 import TeamGoals from '@/components/team-goals';
 import VoiceCommands from '@/components/voice-commands';
+import SocialShare from '@/components/social-share';
+import OnboardingTour from '@/components/onboarding-tour';
 import DailyJournal from '@/components/daily-journal';
 import JournalAnalytics from '@/components/journal-analytics';
 import GoalIntegrationViz from '@/components/goal-integration-viz';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import { Share2, Play } from 'lucide-react';
 import type { Goal, Streak, DailyCompletion } from '@shared/schema';
 
 const POWER_MOTIVATIONAL_QUOTES = [
@@ -64,6 +66,9 @@ export default function Dashboard() {
   const [currentGoalId] = useLocalStorage('currentGoalId', '');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [socialShareOpen, setSocialShareOpen] = useState(false);
+  const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [isVoiceListening, setIsVoiceListening] = useState(false);
   
   // Dynamic quote that changes every 3 minutes
   const [currentQuote, setCurrentQuote] = useState(POWER_MOTIVATIONAL_QUOTES[0]);
@@ -219,7 +224,7 @@ export default function Dashboard() {
         </div>
 
         {/* Progress Section - Always Visible */}
-        <div className="card-premium p-6 mb-6">
+        <div className="card-premium p-6 mb-6" data-tour="mark-complete">
           <h2 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Progress</h2>
           
           <div className="space-y-4">
@@ -243,7 +248,7 @@ export default function Dashboard() {
         </div>
 
         {/* Daily Time Journal - Full Width */}
-        <div className="mb-8">
+        <div className="mb-8" data-tour="daily-journal">
           <DailyJournal goalId={currentGoalId} />
         </div>
 
@@ -273,12 +278,14 @@ export default function Dashboard() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-foreground mb-4 tracking-tight">AI & Smart Features</h2>
           <div className="responsive-grid gap-6">
-            <AICoach 
-              goalName={goal.name}
-              currentStreak={streak?.currentStreak || 0}
-              completions={completions || []}
-              daysRemaining={daysRemaining}
-            />
+            <div data-tour="ai-coach">
+              <AICoach 
+                goalName={goal.name}
+                currentStreak={streak?.currentStreak || 0}
+                completions={completions || []}
+                daysRemaining={daysRemaining}
+              />
+            </div>
             <StreakTracker streak={streak || null} completions={completions} />
             <GoalBreakdown 
               goalName={goal.name}
@@ -297,21 +304,76 @@ export default function Dashboard() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-foreground mb-4 tracking-tight">Premium Features</h2>
           <div className="responsive-grid gap-6">
-            <FinancialStakes 
-              goalId={currentGoalId}
-              goalName={goal.name}
-              daysRemaining={daysRemaining}
-            />
-            <TeamGoals 
-              goalId={currentGoalId}
-              goalName={goal.name}
-              isOwner={true}
-            />
-            <VoiceCommands 
-              goalId={currentGoalId}
-              onMarkComplete={() => markDayCompleteMutation.mutate()}
-              onAddNote={(note) => console.log('Note:', note)}
-            />
+            {/* Social Share Card */}
+            <div className="card-premium p-6" data-tour="social-share">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-6 h-6 bg-yellow-400/10 rounded flex items-center justify-center">
+                  <Share2 className="w-3 h-3 text-yellow-400" />
+                </div>
+                <h3 className="text-lg font-semibold text-foreground tracking-tight">Share Success</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="text-xs text-muted-foreground mb-3">
+                  Celebrate your wins! Share progress on social media with beautiful auto-generated cards.
+                </div>
+                
+                <Button 
+                  onClick={() => setSocialShareOpen(true)}
+                  className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-medium"
+                  disabled={!streak?.currentStreak}
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  Share My Progress
+                </Button>
+                
+                {streak?.currentStreak ? (
+                  <div className="grid grid-cols-3 gap-3 text-center">
+                    <div>
+                      <div className="text-lg font-bold text-foreground">{streak.currentStreak}</div>
+                      <div className="text-xs text-muted-foreground">Current</div>
+                    </div>
+                    <div>
+                      <div className="text-lg font-bold text-foreground">{streak.bestStreak}</div>
+                      <div className="text-xs text-muted-foreground">Best</div>
+                    </div>
+                    <div>
+                      <div className="text-lg font-bold text-foreground">{streak.totalCompleted}</div>
+                      <div className="text-xs text-muted-foreground">Total</div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-xs text-muted-foreground text-center p-3 bg-muted/20 rounded">
+                    Complete at least 1 day to unlock sharing
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="card-premium p-6" data-tour="team-goals">
+              <TeamGoals 
+                goalId={currentGoalId}
+                goalName={goal.name}
+                isOwner={true}
+              />
+            </div>
+            <div className="card-premium p-6" data-tour="voice-commands">
+              <VoiceCommands 
+                isListening={isVoiceListening}
+                onToggleListening={() => setIsVoiceListening(!isVoiceListening)}
+                onCommand={(command, data) => {
+                  switch(command) {
+                    case 'MARK_COMPLETE':
+                      markDayCompleteMutation.mutate();
+                      break;
+                    case 'SHARE_PROGRESS':
+                      setSocialShareOpen(true);
+                      break;
+                    default:
+                      console.log('Voice command:', command, data);
+                  }
+                }}
+              />
+            </div>
             {/* Stats */}
             <div className="card-premium p-6">
               <h3 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Stats</h3>
@@ -335,7 +397,42 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+        
+        {/* Floating Onboarding Button */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <Button
+            onClick={() => setOnboardingOpen(true)}
+            className="w-12 h-12 rounded-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black shadow-lg"
+            data-tour="onboarding-trigger"
+          >
+            <Play className="w-5 h-5" />
+          </Button>
+        </div>
       </div>
+      
+      {/* Social Share Modal */}
+      <SocialShare
+        isOpen={socialShareOpen}
+        onClose={() => setSocialShareOpen(false)}
+        goalName={goal.name}
+        progress={{
+          currentStreak: streak?.currentStreak || 0,
+          bestStreak: streak?.bestStreak || 0,
+          totalCompleted: streak?.totalCompleted || 0
+        }}
+      />
+      
+      {/* Onboarding Tour */}
+      <OnboardingTour
+        isOpen={onboardingOpen}
+        onClose={() => setOnboardingOpen(false)}
+        onComplete={() => {
+          toast({
+            title: "Welcome to Noskip! 🎯",
+            description: "You're all set to start achieving your goals!",
+          });
+        }}
+      />
     </div>
   );
 }
