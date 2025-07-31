@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import SetupGoal from "@/pages/setup-goal";
 import Dashboard from "@/pages/dashboard";
 import NotFound from "@/pages/not-found";
+import { Github, Linkedin, User } from "lucide-react";
 
 function Navigation() {
   const [location] = useLocation();
@@ -25,7 +26,7 @@ function Navigation() {
               className="text-lg font-bold text-foreground hover:opacity-80 transition-opacity tracking-tight"
               data-testid="link-home"
             >
-              MOTIVATE
+              NOSKIP
             </Link>
           </div>
           <div className="flex items-center space-x-6">
@@ -43,6 +44,30 @@ function Navigation() {
                 {item.label}
               </Link>
             ))}
+            <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-border">
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <User className="w-3 h-3" />
+                by Daniyal
+              </span>
+              <a 
+                href="https://github.com/Daniyal00982" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                title="GitHub"
+              >
+                <Github className="w-4 h-4" />
+              </a>
+              <a 
+                href="https://www.linkedin.com/in/ansaridaniyal" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                title="LinkedIn"
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
+            </div>
           </div>
         </div>
       </div>

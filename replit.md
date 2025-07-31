@@ -1,8 +1,14 @@
-# MotivateMe - Goal Tracking and Coaching Application
+# Noskip - Smart Goal Tracking and AI Coaching Application
 
 ## Overview
 
-MotivateMe is a modern goal tracking and coaching application built with React frontend and Express backend. The app helps users set goals, track daily progress with streak counters, and provides AI-powered motivational coaching through OpenAI integration. It features a clean, modern UI built with shadcn/ui components and uses PostgreSQL for data persistence.
+Noskip is a cutting-edge goal tracking and AI coaching application built with React frontend and Express backend. The app helps users set goals, track daily progress with intelligent journaling, and provides AI-powered motivational coaching through OpenAI integration. It features an ASMR-inspired glassmorphic UI built with shadcn/ui components and uses PostgreSQL for data persistence.
+
+## Developer Information
+
+**Built by:** Daniyal  
+**GitHub:** https://github.com/Daniyal00982  
+**LinkedIn:** https://www.linkedin.com/in/ansaridaniyal
 
 ## User Preferences
 
@@ -58,6 +64,13 @@ Design preference: Simple luxury black theme with minimal aesthetics and premium
 - **Emotional Motivation Focus**: Enhanced "why" section to capture deeper motivational drivers
 - **Inspiring Quotes Integration**: Motivational content to enhance the goal-setting mindset
 - **Responsive Mobile Design**: Optimized for all devices with touch-friendly interactions
+
+### Noskip Branding & Developer Attribution (January 31, 2025)
+- **Complete App Rebrand**: Updated from "MotivateMe" to "Noskip" throughout the application
+- **Enhanced SEO & Meta Tags**: Comprehensive title, description, and Open Graph tags for better discoverability
+- **Developer Attribution**: Added Daniyal's information with GitHub and LinkedIn links in navigation and setup page
+- **Professional Branding**: Clean, modern presentation of developer credentials with social links
+- **Branded Welcome Experience**: Updated setup page with "Welcome to Noskip" messaging
 
 ## System Architecture
 

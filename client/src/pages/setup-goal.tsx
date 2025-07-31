@@ -9,7 +9,7 @@ import { useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { Target, Calendar, Heart, Sparkles, Zap, ArrowRight } from 'lucide-react';
+import { Target, Calendar, Heart, Sparkles, Zap, ArrowRight, Github, Linkedin } from 'lucide-react';
 
 export default function SetupGoal() {
   const [, setLocation] = useLocation();
@@ -107,10 +107,10 @@ export default function SetupGoal() {
               <Target className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-white mb-3 tracking-tight">
-              Create Your Goal
+              Welcome to Noskip
             </h1>
             <p className="text-white/70 text-lg leading-relaxed max-w-lg mx-auto">
-              Transform your ambitions into reality with mindful planning and powerful tracking
+              Transform your ambitions into reality with AI-powered tracking and mindful planning
             </p>
           </div>
 
@@ -239,12 +239,36 @@ export default function SetupGoal() {
             </form>
           </div>
 
-          {/* Inspiring Quote */}
-          <div className="text-center mt-8 space-y-3">
+          {/* Developer & Quote */}
+          <div className="text-center mt-8 space-y-4">
             <blockquote className="text-white/80 text-lg italic leading-relaxed">
               "A goal is a dream with a deadline."
             </blockquote>
             <cite className="text-white/60 text-sm">— Napoleon Hill</cite>
+            
+            <div className="flex items-center justify-center gap-4 pt-4 border-t border-white/10">
+              <span className="text-white/60 text-sm">Built with ❤️ by Daniyal</span>
+              <div className="flex items-center gap-3">
+                <a 
+                  href="https://github.com/Daniyal00982" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/60 hover:text-white transition-colors"
+                  title="GitHub"
+                >
+                  <Github className="w-4 h-4" />
+                </a>
+                <a 
+                  href="https://www.linkedin.com/in/ansaridaniyal" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-white/60 hover:text-white transition-colors"
+                  title="LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
