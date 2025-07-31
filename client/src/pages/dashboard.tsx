@@ -207,34 +207,39 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          {/* Main Content */}
-          <div className="xl:col-span-2 space-y-6">
-            {/* Progress Section */}
-            <div className="card-premium p-6">
-              <h2 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Progress</h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-medium text-muted-foreground tracking-wide">TIME ELAPSED</span>
-                    <span className="text-xs font-semibold text-foreground">{progressPercentage}%</span>
-                  </div>
-                  <Progress value={progressPercentage} className="h-1" />
-                </div>
-
-                <Button
-                  onClick={() => markDayCompleteMutation.mutate()}
-                  disabled={markDayCompleteMutation.isPending || isCompletedToday}
-                  className="w-full btn-premium py-3 text-sm font-medium tracking-wide"
-                  data-testid="button-complete-day"
-                >
-                  {isCompletedToday ? 'COMPLETED TODAY' : markDayCompleteMutation.isPending ? 'COMPLETING...' : 'MARK COMPLETE'}
-                </Button>
+        {/* Progress Section - Always Visible */}
+        <div className="card-premium p-6 mb-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Progress</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-xs font-medium text-muted-foreground tracking-wide">TIME ELAPSED</span>
+                <span className="text-xs font-semibold text-foreground">{progressPercentage}%</span>
               </div>
+              <Progress value={progressPercentage} className="h-1" />
             </div>
 
-            {/* Smart Features */}
+            <Button
+              onClick={() => markDayCompleteMutation.mutate()}
+              disabled={markDayCompleteMutation.isPending || isCompletedToday}
+              className="w-full btn-premium py-3 text-sm font-medium tracking-wide"
+              data-testid="button-complete-day"
+            >
+              {isCompletedToday ? 'COMPLETED TODAY' : markDayCompleteMutation.isPending ? 'COMPLETING...' : 'MARK COMPLETE'}
+            </Button>
+          </div>
+        </div>
+
+        {/* Daily Time Journal - Full Width */}
+        <div className="mb-8">
+          <DailyJournal goalId={currentGoalId} />
+        </div>
+
+        {/* Core Features - Horizontal Scroll on Mobile */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-foreground mb-4 tracking-tight">Core Features</h2>
+          <div className="responsive-grid lg:grid-cols-2 gap-6">
             <TimeTracker goalId={currentGoalId} goalName={goal.name} />
             <SmartAnalytics 
               goalId={currentGoalId} 
@@ -242,61 +247,52 @@ export default function Dashboard() {
               completions={completions || []}
               daysRemaining={daysRemaining}
             />
-            
-            {/* Daily Journal */}
-            <DailyJournal goalId={currentGoalId} />
           </div>
+        </div>
 
-          {/* Sidebar 1 - Smart Features */}
-          <div className="space-y-4">
-            {/* AI Coach */}
+        {/* AI & Smart Features - Card Layout */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-foreground mb-4 tracking-tight">AI & Smart Features</h2>
+          <div className="responsive-grid gap-6">
             <AICoach 
               goalName={goal.name}
               currentStreak={streak?.currentStreak || 0}
               completions={completions || []}
               daysRemaining={daysRemaining}
             />
-            
             <StreakTracker streak={streak || null} completions={completions} />
-          </div>
-
-          {/* Sidebar 2 - Premium Features */}
-          <div className="space-y-4">
-            {/* Goal Breakdown */}
             <GoalBreakdown 
               goalName={goal.name}
               deadline={new Date(goal.deadline)}
               daysRemaining={daysRemaining}
             />
-            
-            {/* Smart Habit Suggestions */}
             <HabitSuggestions 
               goalName={goal.name}
               currentStreak={streak?.currentStreak || 0}
               completions={completions || []}
             />
-            
-            {/* Financial Stakes */}
+          </div>
+        </div>
+
+        {/* Premium Features - Card Layout */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-foreground mb-4 tracking-tight">Premium Features</h2>
+          <div className="responsive-grid gap-6">
             <FinancialStakes 
               goalId={currentGoalId}
               goalName={goal.name}
               daysRemaining={daysRemaining}
             />
-            
-            {/* Team Goals */}
             <TeamGoals 
               goalId={currentGoalId}
               goalName={goal.name}
               isOwner={true}
             />
-            
-            {/* Voice Commands */}
             <VoiceCommands 
               goalId={currentGoalId}
               onMarkComplete={() => markDayCompleteMutation.mutate()}
               onAddNote={(note) => console.log('Note:', note)}
             />
-
             {/* Stats */}
             <div className="card-premium p-6">
               <h3 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Stats</h3>
