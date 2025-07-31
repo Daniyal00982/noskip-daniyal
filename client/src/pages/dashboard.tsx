@@ -10,6 +10,10 @@ import { FocusSession } from '@/components/focus-session';
 import { Leaderboard } from '@/components/leaderboard';
 import { RewardsGamification } from '@/components/rewards-gamification';
 import { ShameNotifications } from '@/components/shame-notifications';
+import SmartAnalytics from '@/components/smart-analytics';
+import HabitSuggestions from '@/components/habit-suggestions';
+import TimeTracker from '@/components/time-tracker';
+import GoalBreakdown from '@/components/goal-breakdown';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -199,22 +203,32 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Revolutionary New Features */}
-            <FocusSession goalId={currentGoalId} />
-            <SocialMediaTracker goalId={currentGoalId} />
-            <CountdownTimer goalDeadline={goal.deadline ? new Date(goal.deadline) : undefined} />
+            {/* Smart Features */}
+            <TimeTracker goalId={currentGoalId} goalName={goal.name} />
+            <SmartAnalytics 
+              goalId={currentGoalId} 
+              currentStreak={streak?.currentStreak || 0}
+              completions={completions || []}
+              daysRemaining={daysRemaining}
+            />
           </div>
 
           {/* Sidebar */}
           <div className="space-y-8">
-            {/* Rewards & Gamification */}
-            <RewardsGamification goalId={currentGoalId} currentStreak={streak?.currentStreak || 0} />
+            {/* Goal Breakdown */}
+            <GoalBreakdown 
+              goalName={goal.name}
+              deadline={new Date(goal.deadline)}
+              daysRemaining={daysRemaining}
+            />
             
-            {/* Leaderboard with Social Pressure */}
-            <Leaderboard goalId={currentGoalId} currentStreak={streak?.currentStreak || 0} />
-
-
-
+            {/* Smart Habit Suggestions */}
+            <HabitSuggestions 
+              goalName={goal.name}
+              currentStreak={streak?.currentStreak || 0}
+              completions={completions || []}
+            />
+            
             <StreakTracker streak={streak || null} completions={completions} />
 
             {/* Enhanced Quick Stats */}
