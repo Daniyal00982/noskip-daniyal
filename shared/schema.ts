@@ -96,6 +96,10 @@ export const insertGoalSchema = createInsertSchema(goals).pick({
   name: true,
   deadline: true,
   reason: true,
+}).extend({
+  name: z.string().min(1, "Goal name is required"),
+  deadline: z.coerce.date(),
+  reason: z.string().optional(),
 });
 
 export const insertStreakSchema = createInsertSchema(streaks).pick({

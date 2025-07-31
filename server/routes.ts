@@ -28,7 +28,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/goals", async (req, res) => {
     try {
+      console.log('Received goal data:', req.body);
       const goalData = insertGoalSchema.parse(req.body);
+      console.log('Parsed goal data:', goalData);
+      
       const goal = await storage.createGoal(goalData);
       
       // Create initial streak for the goal
@@ -42,7 +45,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.status(201).json(goal);
     } catch (error) {
-      res.status(400).json({ message: "Invalid goal data" });
+      console.error('Goal creation error:', error);
+      if (error instanceof Error) {
+        res.status(400).json({ message: "Invalid goal data", error: error.message });
+      } else {
+        res.status(400).json({ message: "Invalid goal data" });
+      }
     }
   });
 

@@ -31,10 +31,11 @@ export default function SetupGoal() {
       });
       setLocation('/dashboard');
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Goal creation error:', error);
       toast({
-        title: "Error",
-        description: "Failed to create goal. Please try again.",
+        title: "Goal Creation Failed",
+        description: error?.message || "Please check your inputs and try again.",
         variant: "destructive",
       });
     },
@@ -62,6 +63,12 @@ export default function SetupGoal() {
       return;
     }
 
+    console.log('Creating goal with data:', {
+      name: goalName.trim(),
+      deadline: deadlineDate,
+      reason: reason.trim() || undefined,
+    });
+    
     createGoalMutation.mutate({
       name: goalName.trim(),
       deadline: deadlineDate,
