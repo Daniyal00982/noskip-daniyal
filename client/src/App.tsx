@@ -23,10 +23,14 @@ function Navigation() {
           <div className="flex items-center">
             <Link 
               href="/dashboard" 
-              className="text-lg font-bold text-foreground hover:opacity-80 transition-opacity tracking-tight"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
               data-testid="link-home"
             >
-              NOSKIP
+              <img 
+                src="/logo.png" 
+                alt="Noskip" 
+                className="h-8 w-auto"
+              />
             </Link>
           </div>
           <div className="flex items-center space-x-6">
