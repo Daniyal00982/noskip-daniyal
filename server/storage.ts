@@ -1,4 +1,14 @@
-import { type Goal, type InsertGoal, type Streak, type InsertStreak, type DailyCompletion, type InsertDailyCompletion, type CoachingSession, type InsertCoachingSession } from "@shared/schema";
+import { 
+  type Goal, type InsertGoal, 
+  type Streak, type InsertStreak, 
+  type DailyCompletion, type InsertDailyCompletion,
+  type ScreenTime, type InsertScreenTime,
+  type MicroSession, type InsertMicroSession,
+  type LeaderboardEntry, type InsertLeaderboard,
+  type Reward, type InsertReward,
+  type ShameMetrics, type InsertShameMetrics,
+  type FocusSession, type InsertFocusSession
+} from "@shared/schema";
 import { randomUUID } from "crypto";
 
 export interface IStorage {
@@ -19,22 +29,55 @@ export interface IStorage {
   createDailyCompletion(completion: InsertDailyCompletion): Promise<DailyCompletion>;
   getCompletionsForGoal(goalId: string): Promise<DailyCompletion[]>;
 
-  // Coaching Sessions
-  getCoachingSessions(goalId: string): Promise<CoachingSession[]>;
-  createCoachingSession(session: InsertCoachingSession): Promise<CoachingSession>;
+  // Screen Time Tracking
+  getScreenTimeEntries(goalId: string): Promise<ScreenTime[]>;
+  createScreenTimeEntry(entry: InsertScreenTime): Promise<ScreenTime>;
+  getTodayScreenTime(goalId: string): Promise<number>;
+
+  // Micro Sessions
+  getMicroSessions(goalId: string): Promise<MicroSession[]>;
+  createMicroSession(session: InsertMicroSession): Promise<MicroSession>;
+
+  // Leaderboard
+  getLeaderboard(): Promise<LeaderboardEntry[]>;
+  updateLeaderboardEntry(entry: InsertLeaderboard): Promise<LeaderboardEntry>;
+
+  // Rewards
+  getRewards(goalId: string): Promise<Reward[]>;
+  createReward(reward: InsertReward): Promise<Reward>;
+  claimReward(rewardId: string): Promise<Reward | undefined>;
+
+  // Shame Metrics
+  getShameMetrics(goalId: string): Promise<ShameMetrics | undefined>;
+  updateShameMetrics(goalId: string, metrics: Partial<InsertShameMetrics>): Promise<ShameMetrics>;
+
+  // Focus Sessions
+  getFocusSessions(goalId: string): Promise<FocusSession[]>;
+  createFocusSession(session: InsertFocusSession): Promise<FocusSession>;
+  updateFocusSession(id: string, updates: Partial<InsertFocusSession>): Promise<FocusSession | undefined>;
 }
 
 export class MemStorage implements IStorage {
   private goals: Map<string, Goal>;
   private streaks: Map<string, Streak>;
   private dailyCompletions: Map<string, DailyCompletion>;
-  private coachingSessions: Map<string, CoachingSession>;
+  private screenTimeEntries: Map<string, ScreenTime>;
+  private microSessions: Map<string, MicroSession>;
+  private leaderboardEntries: Map<string, LeaderboardEntry>;
+  private rewards: Map<string, Reward>;
+  private shameMetrics: Map<string, ShameMetrics>;
+  private focusSessions: Map<string, FocusSession>;
 
   constructor() {
     this.goals = new Map();
     this.streaks = new Map();
     this.dailyCompletions = new Map();
-    this.coachingSessions = new Map();
+    this.screenTimeEntries = new Map();
+    this.microSessions = new Map();
+    this.leaderboardEntries = new Map();
+    this.rewards = new Map();
+    this.shameMetrics = new Map();
+    this.focusSessions = new Map();
   }
 
   // Goals
@@ -126,23 +169,170 @@ export class MemStorage implements IStorage {
     );
   }
 
-  // Coaching Sessions
-  async getCoachingSessions(goalId: string): Promise<CoachingSession[]> {
-    return Array.from(this.coachingSessions.values()).filter(
-      session => session.goalId === goalId
-    ).sort((a, b) => (a.createdAt?.getTime() || 0) - (b.createdAt?.getTime() || 0));
+  // Screen Time Tracking
+  async getScreenTimeEntries(goalId: string): Promise<ScreenTime[]> {
+    return Array.from(this.screenTimeEntries.values()).filter(
+      entry => entry.goalId === goalId
+    ).sort((a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0));
   }
 
-  async createCoachingSession(insertSession: InsertCoachingSession): Promise<CoachingSession> {
+  async createScreenTimeEntry(insertEntry: InsertScreenTime): Promise<ScreenTime> {
     const id = randomUUID();
-    const session: CoachingSession = { 
-      ...insertSession, 
+    const entry: ScreenTime = {
+      ...insertEntry,
       id,
-      goalId: insertSession.goalId || null,
+      goalId: insertEntry.goalId || null,
       createdAt: new Date()
     };
-    this.coachingSessions.set(id, session);
+    this.screenTimeEntries.set(id, entry);
+    return entry;
+  }
+
+  async getTodayScreenTime(goalId: string): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const entries = Array.from(this.screenTimeEntries.values()).filter(
+      entry => entry.goalId === goalId && 
+      entry.date && new Date(entry.date).toDateString() === today.toDateString()
+    );
+    return entries.reduce((total, entry) => total + (entry.timeSpentMinutes || 0), 0);
+  }
+
+  // Micro Sessions
+  async getMicroSessions(goalId: string): Promise<MicroSession[]> {
+    return Array.from(this.microSessions.values()).filter(
+      session => session.goalId === goalId
+    ).sort((a, b) => (b.completedAt?.getTime() || 0) - (a.completedAt?.getTime() || 0));
+  }
+
+  async createMicroSession(insertSession: InsertMicroSession): Promise<MicroSession> {
+    const id = randomUUID();
+    const session: MicroSession = {
+      ...insertSession,
+      id,
+      goalId: insertSession.goalId || null,
+      completedAt: new Date()
+    };
+    this.microSessions.set(id, session);
     return session;
+  }
+
+  // Leaderboard
+  async getLeaderboard(): Promise<LeaderboardEntry[]> {
+    return Array.from(this.leaderboardEntries.values())
+      .sort((a, b) => (b.streakCount || 0) - (a.streakCount || 0));
+  }
+
+  async updateLeaderboardEntry(insertEntry: InsertLeaderboard): Promise<LeaderboardEntry> {
+    const existing = Array.from(this.leaderboardEntries.values()).find(
+      entry => entry.goalId === insertEntry.goalId
+    );
+    
+    if (existing) {
+      const updated: LeaderboardEntry = {
+        ...existing,
+        ...insertEntry,
+        lastActiveDate: new Date()
+      };
+      this.leaderboardEntries.set(existing.id, updated);
+      return updated;
+    } else {
+      const id = randomUUID();
+      const entry: LeaderboardEntry = {
+        ...insertEntry,
+        id,
+        goalId: insertEntry.goalId || null,
+        lastActiveDate: new Date()
+      };
+      this.leaderboardEntries.set(id, entry);
+      return entry;
+    }
+  }
+
+  // Rewards
+  async getRewards(goalId: string): Promise<Reward[]> {
+    return Array.from(this.rewards.values()).filter(
+      reward => reward.goalId === goalId
+    ).sort((a, b) => (b.unlockedAt?.getTime() || 0) - (a.unlockedAt?.getTime() || 0));
+  }
+
+  async createReward(insertReward: InsertReward): Promise<Reward> {
+    const id = randomUUID();
+    const reward: Reward = {
+      ...insertReward,
+      id,
+      goalId: insertReward.goalId || null,
+      unlockedAt: new Date()
+    };
+    this.rewards.set(id, reward);
+    return reward;
+  }
+
+  async claimReward(rewardId: string): Promise<Reward | undefined> {
+    const reward = this.rewards.get(rewardId);
+    if (!reward) return undefined;
+    
+    const updated = { ...reward, claimed: true };
+    this.rewards.set(rewardId, updated);
+    return updated;
+  }
+
+  // Shame Metrics
+  async getShameMetrics(goalId: string): Promise<ShameMetrics | undefined> {
+    return Array.from(this.shameMetrics.values()).find(
+      metrics => metrics.goalId === goalId
+    );
+  }
+
+  async updateShameMetrics(goalId: string, updateData: Partial<InsertShameMetrics>): Promise<ShameMetrics> {
+    const existing = await this.getShameMetrics(goalId);
+    
+    if (existing) {
+      const updated: ShameMetrics = { ...existing, ...updateData };
+      this.shameMetrics.set(existing.id, updated);
+      return updated;
+    } else {
+      const id = randomUUID();
+      const metrics: ShameMetrics = {
+        id,
+        goalId: goalId,
+        consecutiveSkips: 0,
+        totalSkips: 0,
+        socialMediaMinutesToday: 0,
+        opportunityCostHours: 0,
+        lastShameNotification: null,
+        ...updateData
+      };
+      this.shameMetrics.set(id, metrics);
+      return metrics;
+    }
+  }
+
+  // Focus Sessions
+  async getFocusSessions(goalId: string): Promise<FocusSession[]> {
+    return Array.from(this.focusSessions.values()).filter(
+      session => session.goalId === goalId
+    ).sort((a, b) => (b.startTime?.getTime() || 0) - (a.startTime?.getTime() || 0));
+  }
+
+  async createFocusSession(insertSession: InsertFocusSession): Promise<FocusSession> {
+    const id = randomUUID();
+    const session: FocusSession = {
+      ...insertSession,
+      id,
+      goalId: insertSession.goalId || null
+    };
+    this.focusSessions.set(id, session);
+    return session;
+  }
+
+  async updateFocusSession(id: string, updateData: Partial<InsertFocusSession>): Promise<FocusSession | undefined> {
+    const session = this.focusSessions.get(id);
+    if (!session) return undefined;
+    
+    const updated = { ...session, ...updateData };
+    this.focusSessions.set(id, updated);
+    return updated;
   }
 }
 

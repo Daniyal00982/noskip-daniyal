@@ -1,8 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertGoalSchema, insertCoachingSessionSchema } from "@shared/schema";
-import { getBrutalCoachResponse } from "./services/openai";
+import { insertGoalSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Goals
@@ -123,46 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Coaching
-  app.get("/api/coaching/:goalId", async (req, res) => {
-    try {
-      const sessions = await storage.getCoachingSessions(req.params.goalId);
-      res.json(sessions);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to fetch coaching sessions" });
-    }
-  });
 
-  app.post("/api/coaching/:goalId", async (req, res) => {
-    try {
-      const goalId = req.params.goalId;
-      const { userMessage } = req.body;
-
-      if (!userMessage || typeof userMessage !== 'string') {
-        return res.status(400).json({ message: "User message is required" });
-      }
-
-      // Get goal for context
-      const goal = await storage.getGoal(goalId);
-      if (!goal) {
-        return res.status(404).json({ message: "Goal not found" });
-      }
-
-      // Get coach response from OpenAI
-      const coachResponse = await getBrutalCoachResponse(userMessage, goal.name);
-
-      // Save session
-      const session = await storage.createCoachingSession({
-        goalId,
-        userMessage,
-        coachResponse,
-      });
-
-      res.json(session);
-    } catch (error) {
-      res.status(500).json({ message: "Failed to get coaching response" });
-    }
-  });
 
   // Daily completions
   app.get("/api/completions/:goalId", async (req, res) => {
@@ -171,6 +131,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(completions);
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch completions" });
+    }
+  });
+
+  // Screen Time Tracking
+  app.get('/api/screen-time/:goalId', async (req, res) => {
+    try {
+      const entries = await storage.getScreenTimeEntries(req.params.goalId);
+      res.json(entries);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch screen time entries' });
+    }
+  });
+
+  app.get('/api/screen-time/today/:goalId', async (req, res) => {
+    try {
+      const todayMinutes = await storage.getTodayScreenTime(req.params.goalId);
+      res.json(todayMinutes);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch today screen time' });
+    }
+  });
+
+  app.post('/api/screen-time/:goalId', async (req, res) => {
+    try {
+      const entry = await storage.createScreenTimeEntry({
+        goalId: req.params.goalId,
+        ...req.body
+      });
+      res.json(entry);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to create screen time entry' });
+    }
+  });
+
+  // Focus Sessions
+  app.get('/api/focus-sessions/:goalId', async (req, res) => {
+    try {
+      const sessions = await storage.getFocusSessions(req.params.goalId);
+      res.json(sessions);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch focus sessions' });
+    }
+  });
+
+  app.post('/api/focus-sessions/:goalId', async (req, res) => {
+    try {
+      const session = await storage.createFocusSession({
+        goalId: req.params.goalId,
+        ...req.body
+      });
+      res.json(session);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to create focus session' });
+    }
+  });
+
+  app.put('/api/focus-sessions/:sessionId', async (req, res) => {
+    try {
+      const session = await storage.updateFocusSession(req.params.sessionId, req.body);
+      res.json(session);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to update focus session' });
+    }
+  });
+
+  // Rewards System
+  app.get('/api/rewards/:goalId', async (req, res) => {
+    try {
+      const rewards = await storage.getRewards(req.params.goalId);
+      res.json(rewards);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch rewards' });
+    }
+  });
+
+  app.post('/api/rewards/:goalId', async (req, res) => {
+    try {
+      const reward = await storage.createReward({
+        goalId: req.params.goalId,
+        ...req.body
+      });
+      res.json(reward);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to create reward' });
+    }
+  });
+
+  app.post('/api/rewards/:rewardId/claim', async (req, res) => {
+    try {
+      const reward = await storage.claimReward(req.params.rewardId);
+      res.json(reward);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to claim reward' });
+    }
+  });
+
+  // Leaderboard
+  app.get('/api/leaderboard', async (req, res) => {
+    try {
+      const leaderboard = await storage.getLeaderboard();
+      res.json(leaderboard);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch leaderboard' });
+    }
+  });
+
+  app.post('/api/leaderboard', async (req, res) => {
+    try {
+      const entry = await storage.updateLeaderboardEntry(req.body);
+      res.json(entry);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to update leaderboard' });
+    }
+  });
+
+  // Shame Metrics
+  app.get('/api/shame-metrics/:goalId', async (req, res) => {
+    try {
+      const metrics = await storage.getShameMetrics(req.params.goalId);
+      res.json(metrics);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch shame metrics' });
+    }
+  });
+
+  app.put('/api/shame-metrics/:goalId', async (req, res) => {
+    try {
+      const metrics = await storage.updateShameMetrics(req.params.goalId, req.body);
+      res.json(metrics);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to update shame metrics' });
     }
   });
 

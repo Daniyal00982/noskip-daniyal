@@ -5,6 +5,11 @@ import { Progress } from '@/components/ui/progress';
 import { CountdownTimer } from '@/components/countdown-timer';
 import { StreakTracker } from '@/components/streak-tracker';
 import { DailyNotification } from '@/components/daily-notification';
+import { SocialMediaTracker } from '@/components/social-media-tracker';
+import { FocusSession } from '@/components/focus-session';
+import { Leaderboard } from '@/components/leaderboard';
+import { RewardsGamification } from '@/components/rewards-gamification';
+import { ShameNotifications } from '@/components/shame-notifications';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -120,6 +125,15 @@ export default function Dashboard() {
     <div className="min-h-screen py-8">
       <DailyNotification daysRemaining={daysRemaining} goalName={goal.name} />
       
+      {/* Shame & Social Pressure System */}
+      <ShameNotifications
+        goalName={goal.name}
+        daysRemaining={daysRemaining}
+        currentStreak={streak?.currentStreak || 0}
+        consecutiveSkips={0} // Will be connected to real data
+        socialMediaMinutes={120} // Will be connected to real screen time data
+      />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Goal Header */}
         <div className="bg-gradient-primary rounded-3xl p-8 text-white mb-8">
@@ -163,11 +177,20 @@ export default function Dashboard() {
               </div>
             </div>
 
+            {/* Revolutionary New Features */}
+            <FocusSession goalId={currentGoalId} />
+            <SocialMediaTracker goalId={currentGoalId} />
             <CountdownTimer goalDeadline={goal.deadline ? new Date(goal.deadline) : undefined} />
           </div>
 
           {/* Sidebar */}
           <div className="space-y-8">
+            {/* Rewards & Gamification */}
+            <RewardsGamification goalId={currentGoalId} currentStreak={streak?.currentStreak || 0} />
+            
+            {/* Leaderboard with Social Pressure */}
+            <Leaderboard goalId={currentGoalId} currentStreak={streak?.currentStreak || 0} />
+
             {/* Motivational Quote */}
             <div className="bg-gradient-secondary rounded-2xl p-6 text-white">
               <h3 className="font-bold mb-4">💫 Daily Motivation</h3>
@@ -179,14 +202,20 @@ export default function Dashboard() {
 
             <StreakTracker streak={streak || null} completions={completions} />
 
-            {/* Quick Stats */}
+            {/* Enhanced Quick Stats */}
             <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">📊 Quick Stats</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">📊 Reality Check</h3>
               
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600">Success Rate</span>
-                  <span className="font-bold text-secondary">
+                  <span className={`font-bold ${
+                    completions.length ? 
+                      Math.round((completions.filter(c => c.completed).length / completions.length) * 100) >= 80 ? 'text-green-600' :
+                      Math.round((completions.filter(c => c.completed).length / completions.length) * 100) >= 60 ? 'text-yellow-600' :
+                      'text-red-600'
+                    : 'text-gray-600'
+                  }`}>
                     {completions.length ? Math.round((completions.filter(c => c.completed).length / completions.length) * 100) : 0}%
                   </span>
                 </div>
@@ -198,6 +227,15 @@ export default function Dashboard() {
                   <span className="text-gray-600">Goal Progress</span>
                   <span className="font-bold text-accent">{progressPercentage}%</span>
                 </div>
+                
+                {/* Harsh Reality Check */}
+                {(streak?.currentStreak || 0) < 7 && (
+                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <p className="text-red-700 text-sm font-semibold">
+                      ⚠️ Only {streak?.currentStreak || 0} days consistent. Others are at 30+ days!
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
