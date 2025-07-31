@@ -81,12 +81,10 @@ export default function FinancialStakes({ goalId, goalName, daysRemaining }: Fin
   }
 
   return (
-    <div className="card-premium p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-6 h-6 bg-muted rounded flex items-center justify-center">
-          <Target className="w-3 h-3 text-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold text-foreground tracking-tight">Financial Stakes</h3>
+    <div className="card-premium p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Target className="w-4 h-4 text-foreground" />
+        <h3 className="text-sm font-semibold text-foreground tracking-tight">Financial Stakes</h3>
       </div>
 
       <div className="space-y-4">

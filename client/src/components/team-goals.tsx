@@ -64,16 +64,14 @@ export default function TeamGoals({ goalId, goalName, isOwner = true }: TeamGoal
   };
 
   return (
-    <div className="card-premium p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 bg-muted rounded flex items-center justify-center">
-            <Users className="w-3 h-3 text-foreground" />
-          </div>
-          <h3 className="text-lg font-semibold text-foreground tracking-tight">Team Goals</h3>
+    <div className="card-premium p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <Users className="w-4 h-4 text-foreground" />
+          <h3 className="text-sm font-semibold text-foreground tracking-tight">Team Goals</h3>
         </div>
         <Badge variant="outline" className="text-muted-foreground border-border text-xs">
-          PREMIUM
+          PRO
         </Badge>
       </div>
 

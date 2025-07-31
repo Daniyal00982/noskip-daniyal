@@ -18,6 +18,7 @@ import AICoach from '@/components/ai-coach';
 import FinancialStakes from '@/components/financial-stakes';
 import TeamGoals from '@/components/team-goals';
 import VoiceCommands from '@/components/voice-commands';
+import DailyJournal from '@/components/daily-journal';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -206,9 +207,9 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="xl:col-span-2 space-y-6">
             {/* Progress Section */}
             <div className="card-premium p-6">
               <h2 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Progress</h2>
@@ -242,6 +243,12 @@ export default function Dashboard() {
               daysRemaining={daysRemaining}
             />
             
+            {/* Daily Journal */}
+            <DailyJournal goalId={currentGoalId} />
+          </div>
+
+          {/* Sidebar 1 - Smart Features */}
+          <div className="space-y-4">
             {/* AI Coach */}
             <AICoach 
               goalName={goal.name}
@@ -249,10 +256,12 @@ export default function Dashboard() {
               completions={completions || []}
               daysRemaining={daysRemaining}
             />
+            
+            <StreakTracker streak={streak || null} completions={completions} />
           </div>
 
-          {/* Sidebar */}
-          <div className="space-y-8">
+          {/* Sidebar 2 - Premium Features */}
+          <div className="space-y-4">
             {/* Goal Breakdown */}
             <GoalBreakdown 
               goalName={goal.name}
@@ -287,8 +296,6 @@ export default function Dashboard() {
               onMarkComplete={() => markDayCompleteMutation.mutate()}
               onAddNote={(note) => console.log('Note:', note)}
             />
-            
-            <StreakTracker streak={streak || null} completions={completions} />
 
             {/* Stats */}
             <div className="card-premium p-6">

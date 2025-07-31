@@ -111,14 +111,12 @@ export default function AICoach({ goalName, currentStreak, completions, daysRema
   };
 
   return (
-    <div className="card-premium p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-6 h-6 bg-muted rounded flex items-center justify-center">
-          <Brain className="w-3 h-3 text-foreground" />
-        </div>
-        <h3 className="text-lg font-semibold text-foreground tracking-tight">AI Coach</h3>
+    <div className="card-premium p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Brain className="w-4 h-4 text-foreground" />
+        <h3 className="text-sm font-semibold text-foreground tracking-tight">AI Coach</h3>
         <Badge variant="outline" className="text-muted-foreground border-border text-xs">
-          BETA
+          AI
         </Badge>
       </div>
 
