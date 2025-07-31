@@ -1,40 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: hsl(0, 0%, 6%);
-  --foreground: hsl(0, 0%, 95%);
-  --muted: hsl(0, 0%, 12%);
-  --muted-foreground: hsl(0, 0%, 70%);
-  --popover: hsl(0, 0%, 8%);
-  --popover-foreground: hsl(0, 0%, 95%);
-  --card: hsl(0, 0%, 8%);
-  --card-foreground: hsl(0, 0%, 95%);
-  --border: hsl(0, 0%, 20%);
-  --input: hsl(0, 0%, 12%);
-  --primary: hsl(50, 100%, 80%);
-  --primary-foreground: hsl(0, 0%, 6%);
-  --secondary: hsl(0, 0%, 18%);
-  --secondary-foreground: hsl(0, 0%, 95%);
-  --accent: hsl(50, 100%, 80%);
-  --accent-foreground: hsl(0, 0%, 6%);
-  --destructive: hsl(0, 100%, 70%);
-  --destructive-foreground: hsl(0, 0%, 95%);
-  --ring: hsl(50, 100%, 80%);
-  --radius: 0.5rem;
-  
-  /* Simple luxury colors */
-  --gold: hsl(50, 100%, 80%);
-  --platinum: hsl(0, 0%, 90%);
-  
-  /* Minimal gradients */
-  --gradient-gold: linear-gradient(135deg, hsl(50, 100%, 80%) 0%, hsl(45, 100%, 75%) 100%);
-  --gradient-dark: linear-gradient(135deg, hsl(0, 0%, 8%) 0%, hsl(0, 0%, 6%) 100%);
-  --gradient-premium: hsl(0, 0%, 6%);
+  --background: hsl(0, 0%, 2%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(0, 0%, 8%);
+  --muted-foreground: hsl(0, 0%, 65%);
+  --popover: hsl(0, 0%, 4%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(0, 0%, 4%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(0, 0%, 12%);
+  --input: hsl(0, 0%, 8%);
+  --primary: hsl(0, 0%, 98%);
+  --primary-foreground: hsl(0, 0%, 2%);
+  --secondary: hsl(0, 0%, 8%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(0, 0%, 98%);
+  --accent-foreground: hsl(0, 0%, 2%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(0, 0%, 98%);
+  --radius: 0.25rem;
 }
 
 .dark {
@@ -78,49 +71,69 @@
   }
 }
 
-/* Simple Luxury Utilities */
-.bg-gradient-gold {
-  background: var(--gradient-gold);
+/* Minimal Black & White Utilities */
+.card-premium {
+  background: hsl(0, 0%, 4%);
+  border: 1px solid hsl(0, 0%, 12%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
-.bg-gradient-dark {
-  background: var(--gradient-dark);
+.btn-premium {
+  background: hsl(0, 0%, 98%);
+  color: hsl(0, 0%, 2%);
+  border: 1px solid hsl(0, 0%, 98%);
+  font-weight: 600;
+  letter-spacing: 0.025em;
+  transition: all 0.15s ease;
 }
 
-.bg-gradient-premium {
-  background: var(--gradient-premium);
+.btn-premium:hover {
+  background: hsl(0, 0%, 90%);
+  transform: translateY(-1px);
 }
 
-.bg-card-premium {
-  background: hsl(0, 0%, 8%);
+.btn-outline {
+  background: transparent;
+  color: hsl(0, 0%, 98%);
   border: 1px solid hsl(0, 0%, 20%);
+  font-weight: 500;
+  transition: all 0.15s ease;
 }
 
-.text-gradient-gold {
-  background: var(--gradient-gold);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.text-gold {
-  color: var(--gold);
-}
-
-/* Minimal Luxury Effects */
-.card-minimal {
+.btn-outline:hover {
   background: hsl(0, 0%, 8%);
-  border: 1px solid hsl(0, 0%, 20%);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border-color: hsl(0, 0%, 30%);
 }
 
-.premium-shadow {
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* Typography & Spacing */
+.text-premium {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
-.gold-accent {
-  border: 1px solid var(--gold);
-  box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+.text-premium-bold {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.text-premium-heading {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* Minimal Effects */
+.shadow-minimal {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.border-minimal {
+  border: 1px solid hsl(0, 0%, 12%);
 }
 
 /* Animation Utilities */
@@ -150,18 +163,10 @@
   100% { background-position: 0% 50%; }
 }
 
-/* Simple Premium Button */
-.btn-premium {
-  background: var(--gradient-gold);
-  color: hsl(0, 0%, 6%);
-  border: none;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.2s ease;
-}
-
-.btn-premium:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -20,18 +20,26 @@ import { useToast } from '@/hooks/use-toast';
 import type { Goal, Streak, DailyCompletion } from '@shared/schema';
 
 const POWER_MOTIVATIONAL_QUOTES = [
-  { text: "Every second you waste scrolling, someone else is building their empire. YOUR TIME IS RUNNING OUT!", author: "Reality Check", intensity: "critical" },
-  { text: "While you're making excuses, your competition is making MILLIONS. WAKE UP!", author: "Success Mindset", intensity: "critical" },
-  { text: "POVERTY is waiting for you if you don't ACT NOW. Your family deserves BETTER!", author: "Financial Freedom", intensity: "urgent" },
-  { text: "You're ONE decision away from a completely different life. CHOOSE GREATNESS TODAY!", author: "Life Transformation", intensity: "critical" },
-  { text: "Your future self is BEGGING you to stop being lazy. DON'T DISAPPOINT THEM!", author: "Future You", intensity: "urgent" },
-  { text: "Every day you don't work on your goal, you're choosing to stay BROKE and AVERAGE.", author: "Wealth Mindset", intensity: "critical" },
-  { text: "STOP scrolling and START BUILDING! Your dreams won't create themselves!", author: "Action Taker", intensity: "urgent" },
-  { text: "Rich people work while poor people make excuses. WHICH ONE ARE YOU?", author: "Mindset Shift", intensity: "critical" },
-  { text: "Your goal isn't just a wish - it's your ESCAPE PLAN from mediocrity!", author: "Success Strategy", intensity: "urgent" },
-  { text: "The pain of discipline weighs ounces. The pain of regret weighs TONS!", author: "Discipline Master", intensity: "critical" },
-  { text: "You're not tired, you're UNINSPIRED. Find your WHY and DOMINATE!", author: "Motivation Beast", intensity: "urgent" },
-  { text: "Every minute wasted on social media is a minute stolen from your SUCCESS!", author: "Time Master", intensity: "critical" }
+  { text: "Time is the scarcest resource. Unless it is managed, nothing else can be managed.", author: "Peter Drucker", intensity: "focused" },
+  { text: "The way to get things done is not to mind who gets the credit for doing them.", author: "Benjamin Jowett", intensity: "focused" },
+  { text: "Success is walking from failure to failure with no loss of enthusiasm.", author: "Winston Churchill", intensity: "resilient" },
+  { text: "The future depends on what we do in the present.", author: "Mahatma Gandhi", intensity: "present" },
+  { text: "Quality is not an act, it is a habit.", author: "Aristotle", intensity: "habit" },
+  { text: "Excellence is never an accident. It is the result of high intention, sincere effort, and skilled execution.", author: "Aristotle", intensity: "excellence" },
+  { text: "The best time to plant a tree was 20 years ago. The second best time is now.", author: "Chinese Proverb", intensity: "action" },
+  { text: "Discipline is choosing between what you want now and what you want most.", author: "Abraham Lincoln", intensity: "discipline" },
+  { text: "Focus on being productive instead of busy.", author: "Tim Ferriss", intensity: "focus" },
+  { text: "The successful warrior is the average person with laser-like focus.", author: "Bruce Lee", intensity: "focus" },
+  { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle", intensity: "hope" },
+  { text: "Progress, not perfection, is the goal.", author: "Unknown", intensity: "progress" },
+  { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma", intensity: "consistency" },
+  { text: "The compound effect of small, consistent actions is extraordinary.", author: "Darren Hardy", integrity: "compound" },
+  { text: "Success is the sum of small efforts repeated day in and day out.", author: "Robert Collier", intensity: "repetition" },
+  { text: "Champions don't become champions in the ring. They become champions in their training.", author: "Muhammad Ali", intensity: "preparation" },
+  { text: "The difference between ordinary and extraordinary is that little extra.", author: "Jimmy Johnson", intensity: "extra" },
+  { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson", intensity: "persistence" },
+  { text: "The expert in anything was once a beginner.", author: "Helen Hayes", intensity: "growth" },
+  { text: "What we plant in the soil of contemplation, we shall reap in the harvest of action.", author: "Meister Eckhart", intensity: "contemplation" }
 ];
 
 const SUCCESS_COMPLETION_QUOTES = [
@@ -49,6 +57,28 @@ export default function Dashboard() {
   const [currentGoalId] = useLocalStorage('currentGoalId', '');
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  // Dynamic quote that changes every 3 minutes
+  const [currentQuote, setCurrentQuote] = useState(POWER_MOTIVATIONAL_QUOTES[0]);
+  
+  useEffect(() => {
+    // Initial quote based on current time
+    const getQuoteIndex = () => {
+      const now = new Date();
+      const minutesSinceStart = Math.floor(now.getMinutes() / 3); // Changes every 3 minutes
+      const dailyOffset = now.getDate() + now.getMonth() * 31; // Different quotes for different days
+      return (minutesSinceStart + dailyOffset) % POWER_MOTIVATIONAL_QUOTES.length;
+    };
+    
+    setCurrentQuote(POWER_MOTIVATIONAL_QUOTES[getQuoteIndex()]);
+    
+    // Update quote every 3 minutes
+    const interval = setInterval(() => {
+      setCurrentQuote(POWER_MOTIVATIONAL_QUOTES[getQuoteIndex()]);
+    }, 3 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const { data: goal, isLoading: goalLoading } = useQuery<Goal>({
     queryKey: ['/api/goals', currentGoalId],
@@ -113,11 +143,7 @@ export default function Dashboard() {
     return { daysRemaining, progressPercentage: Math.round(progressPercentage), isCompletedToday };
   }, [goal, completions]);
 
-  const dailyPowerQuote = useMemo(() => {
-    const today = new Date().toDateString();
-    const hash = today.split('').reduce((sum, char) => sum + char.charCodeAt(0), 0);
-    return POWER_MOTIVATIONAL_QUOTES[hash % POWER_MOTIVATIONAL_QUOTES.length];
-  }, []);
+
 
   if (goalLoading) {
     return (
@@ -153,25 +179,25 @@ export default function Dashboard() {
       <DailyNotification daysRemaining={daysRemaining} goalName={goal.name} />
       
       <div className="max-w-6xl mx-auto px-6">
-        {/* Daily Quote */}
-        <div className="card-minimal p-8 mb-8 text-center">
-          <blockquote className="text-lg font-medium leading-relaxed mb-4 text-foreground">
-            "{dailyPowerQuote.text}"
+        {/* Dynamic Quote */}
+        <div className="card-premium p-6 mb-6 text-center">
+          <blockquote className="text-base font-medium leading-relaxed mb-3 text-foreground">
+            "{currentQuote.text}"
           </blockquote>
-          <cite className="text-muted-foreground text-sm">— {dailyPowerQuote.author}</cite>
+          <cite className="text-muted-foreground text-xs tracking-wide">— {currentQuote.author}</cite>
         </div>
         {/* Goal Header */}
-        <div className="card-minimal p-8 mb-8">
+        <div className="card-premium p-6 mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
             <div className="flex-1">
-              <h1 className="text-3xl font-bold text-gold mb-2">{goal.name}</h1>
+              <h1 className="text-2xl font-bold text-foreground mb-2 tracking-tight">{goal.name}</h1>
               {goal.reason && (
-                <p className="text-muted-foreground">{goal.reason}</p>
+                <p className="text-muted-foreground text-sm">{goal.reason}</p>
               )}
             </div>
             <div className="mt-4 sm:mt-0 text-right">
-              <div className="text-3xl font-bold text-gold">{daysRemaining}</div>
-              <div className="text-muted-foreground text-sm">days remaining</div>
+              <div className="text-2xl font-bold text-foreground">{daysRemaining}</div>
+              <div className="text-muted-foreground text-xs tracking-wide">DAYS LEFT</div>
             </div>
           </div>
         </div>
@@ -180,25 +206,25 @@ export default function Dashboard() {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
             {/* Progress Section */}
-            <div className="card-minimal p-8">
-              <h2 className="text-xl font-semibold text-gold mb-6">Progress</h2>
+            <div className="card-premium p-6">
+              <h2 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Progress</h2>
               
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div>
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm font-medium text-muted-foreground">Time Elapsed</span>
-                    <span className="text-sm font-semibold text-gold">{progressPercentage}%</span>
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xs font-medium text-muted-foreground tracking-wide">TIME ELAPSED</span>
+                    <span className="text-xs font-semibold text-foreground">{progressPercentage}%</span>
                   </div>
-                  <Progress value={progressPercentage} className="h-2" />
+                  <Progress value={progressPercentage} className="h-1" />
                 </div>
 
                 <Button
                   onClick={() => markDayCompleteMutation.mutate()}
                   disabled={markDayCompleteMutation.isPending || isCompletedToday}
-                  className="w-full btn-premium py-4"
+                  className="w-full btn-premium py-3 text-sm font-medium tracking-wide"
                   data-testid="button-complete-day"
                 >
-                  {isCompletedToday ? 'Completed Today' : markDayCompleteMutation.isPending ? 'Completing...' : 'Mark Complete'}
+                  {isCompletedToday ? 'COMPLETED TODAY' : markDayCompleteMutation.isPending ? 'COMPLETING...' : 'MARK COMPLETE'}
                 </Button>
               </div>
             </div>
@@ -231,40 +257,25 @@ export default function Dashboard() {
             
             <StreakTracker streak={streak || null} completions={completions} />
 
-            {/* Enhanced Quick Stats */}
-            <div className="bg-white rounded-2xl p-6 shadow-lg">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">📊 Reality Check</h3>
+            {/* Stats */}
+            <div className="card-premium p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Stats</h3>
               
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Success Rate</span>
-                  <span className={`font-bold ${
-                    completions.length ? 
-                      Math.round((completions.filter(c => c.completed).length / completions.length) * 100) >= 80 ? 'text-green-600' :
-                      Math.round((completions.filter(c => c.completed).length / completions.length) * 100) >= 60 ? 'text-yellow-600' :
-                      'text-red-600'
-                    : 'text-gray-600'
-                  }`}>
+                  <span className="text-xs text-muted-foreground tracking-wide">SUCCESS RATE</span>
+                  <span className="font-medium text-foreground">
                     {completions.length ? Math.round((completions.filter(c => c.completed).length / completions.length) * 100) : 0}%
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Days Active</span>
-                  <span className="font-bold text-primary">{completions.length}</span>
+                  <span className="text-xs text-muted-foreground tracking-wide">DAYS ACTIVE</span>
+                  <span className="font-medium text-foreground">{completions.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Goal Progress</span>
-                  <span className="font-bold text-accent">{progressPercentage}%</span>
+                  <span className="text-xs text-muted-foreground tracking-wide">PROGRESS</span>
+                  <span className="font-medium text-foreground">{progressPercentage}%</span>
                 </div>
-                
-                {/* Harsh Reality Check */}
-                {(streak?.currentStreak || 0) < 7 && (
-                  <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-red-700 text-sm font-semibold">
-                      ⚠️ Only {streak?.currentStreak || 0} days consistent. Others are at 30+ days!
-                    </p>
-                  </div>
-                )}
               </div>
             </div>
           </div>

@@ -80,14 +80,14 @@ export default function SetupGoal() {
     <div className="min-h-screen py-16">
       <div className="max-w-2xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gold mb-4">
+          <h1 className="text-2xl font-bold text-foreground mb-3 tracking-tight">
             Set Your Goal
           </h1>
-          <p className="text-muted-foreground">Define what you want to achieve and when.</p>
+          <p className="text-muted-foreground text-sm">Define what you want to achieve and when.</p>
         </div>
 
-        <div className="card-minimal p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="card-premium p-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="goalName" className="text-sm font-medium mb-2 block">
                   Goal Name *
@@ -138,10 +138,10 @@ export default function SetupGoal() {
               <Button
                 type="submit"
                 disabled={createGoalMutation.isPending}
-                className="w-full btn-premium py-4"
+                className="w-full btn-premium py-3 text-sm font-medium tracking-wide"
                 data-testid="button-create-goal"
               >
-                {createGoalMutation.isPending ? 'Creating Goal...' : 'Create Goal'}
+                {createGoalMutation.isPending ? 'CREATING...' : 'CREATE GOAL'}
               </Button>
             </form>
         </div>

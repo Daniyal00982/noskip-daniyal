@@ -114,25 +114,25 @@ export default function SmartAnalytics({ goalId, currentStreak, completions, day
   const bestDay = getBestPerformingDay();
 
   return (
-    <div className="card-minimal p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-semibold text-gold">Smart Analytics</h3>
-        <Badge variant="outline" className="text-gold border-gold">
-          AI Powered
+    <div className="card-premium p-6">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-foreground tracking-tight">Smart Analytics</h3>
+        <Badge variant="outline" className="text-muted-foreground border-border text-xs">
+          AI
         </Badge>
       </div>
 
       {/* Performance Metrics */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-2 gap-3 mb-4">
         <div className="text-center">
-          <div className="text-2xl font-bold text-gold">
+          <div className="text-xl font-bold text-foreground">
             {completions.length > 0 ? Math.round((completions.filter(c => c.completed).length / completions.length) * 100) : 0}%
           </div>
-          <div className="text-sm text-muted-foreground">Success Rate</div>
+          <div className="text-xs text-muted-foreground tracking-wide">SUCCESS</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-gold">{currentStreak}</div>
-          <div className="text-sm text-muted-foreground">Current Streak</div>
+          <div className="text-xl font-bold text-foreground">{currentStreak}</div>
+          <div className="text-xs text-muted-foreground tracking-wide">STREAK</div>
         </div>
       </div>
 

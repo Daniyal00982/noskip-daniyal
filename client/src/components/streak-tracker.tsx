@@ -39,44 +39,44 @@ export function StreakTracker({ streak, completions }: StreakTrackerProps) {
   }, [completions]);
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-lg">
-      <h3 className="text-xl font-bold text-gray-900 mb-4">🔥 Streak Tracker</h3>
+    <div className="card-premium p-6">
+      <h3 className="text-lg font-semibold text-foreground mb-4 tracking-tight">Streak</h3>
       
-      <div className="text-center mb-6">
-        <div className="text-5xl font-bold text-accent mb-2">
+      <div className="text-center mb-4">
+        <div className="text-3xl font-bold text-foreground mb-1">
           {streak?.currentStreak || 0}
         </div>
-        <div className="text-gray-600">Day Streak</div>
+        <div className="text-xs text-muted-foreground tracking-wide">DAYS</div>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Best Streak:</span>
-          <span className="font-semibold">{streak?.bestStreak || 0} days</span>
+      <div className="space-y-2">
+        <div className="flex justify-between text-xs">
+          <span className="text-muted-foreground tracking-wide">BEST</span>
+          <span className="font-medium text-foreground">{streak?.bestStreak || 0}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Total Completed:</span>
-          <span className="font-semibold">{streak?.totalCompleted || 0} days</span>
+        <div className="flex justify-between text-xs">
+          <span className="text-muted-foreground tracking-wide">TOTAL</span>
+          <span className="font-medium text-foreground">{streak?.totalCompleted || 0}</span>
         </div>
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Success Rate:</span>
-          <span className="font-semibold text-secondary">{successRate}%</span>
+        <div className="flex justify-between text-xs">
+          <span className="text-muted-foreground tracking-wide">SUCCESS</span>
+          <span className="font-medium text-foreground">{successRate}%</span>
         </div>
       </div>
 
       {/* Weekly Calendar */}
-      <div className="mt-6">
-        <h4 className="text-sm font-semibold text-gray-700 mb-3">This Week</h4>
+      <div className="mt-4">
+        <h4 className="text-xs font-medium text-muted-foreground mb-2 tracking-wide">THIS WEEK</h4>
         <div className="grid grid-cols-7 gap-1">
           {weekDays.map((day, index) => (
             <div
               key={index}
-              className={`aspect-square rounded text-white flex items-center justify-center text-xs font-semibold ${
+              className={`aspect-square rounded-sm flex items-center justify-center text-xs font-medium ${
                 day.isCompleted
-                  ? 'bg-secondary'
+                  ? 'bg-foreground text-background'
                   : day.isToday
-                  ? 'bg-accent'
-                  : 'bg-gray-200 text-gray-400'
+                  ? 'bg-muted text-foreground border border-border'
+                  : 'bg-muted text-muted-foreground'
               }`}
             >
               {day.label}

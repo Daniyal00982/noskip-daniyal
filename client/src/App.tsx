@@ -16,27 +16,27 @@ function Navigation() {
   ];
 
   return (
-    <nav className="card-minimal sticky top-0 z-50 border-b border-border">
-      <div className="max-w-7xl mx-auto px-8">
-        <div className="flex justify-between items-center h-16">
+    <nav className="card-premium sticky top-0 z-50 border-b border-border">
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex justify-between items-center h-14">
           <div className="flex items-center">
             <Link 
               href="/dashboard" 
-              className="text-xl font-bold text-gold hover:opacity-80 transition-opacity"
+              className="text-lg font-bold text-foreground hover:opacity-80 transition-opacity tracking-tight"
               data-testid="link-home"
             >
               MOTIVATE
             </Link>
           </div>
-          <div className="flex items-center space-x-8">
+          <div className="flex items-center space-x-6">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 href={item.path}
                 data-testid={`link-${item.label.toLowerCase()}`}
-                className={`text-sm font-medium transition-colors ${
+                className={`text-sm font-medium transition-colors tracking-wide ${
                   location === item.path
-                    ? "text-gold"
+                    ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
