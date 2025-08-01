@@ -1,8 +1,7 @@
 {
-  "buildCommand": "npm install && npx vite build --config vite.config.vercel.ts",
+  "buildCommand": "node build-simple.js",
   "outputDirectory": "dist/public",
   "installCommand": "npm install",
-  "devCommand": "npm run dev",
   "rewrites": [
     {
       "source": "/((?!api).*)",
