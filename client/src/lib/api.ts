@@ -1,5 +1,7 @@
-// API configuration - always use relative URLs for seamless deployment
-const API_BASE_URL = '';
+// Production API configuration for Vercel deployment
+const API_BASE_URL = import.meta.env.PROD 
+  ? '' // Relative URLs for production
+  : 'http://localhost:5000'; // Localhost for development
 
 export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
