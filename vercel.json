@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@20.x"
-    }
-  },
   "buildCommand": "npx vite build --config vite.config.vercel.ts",
   "outputDirectory": "dist/public",
   "installCommand": "npm install",
