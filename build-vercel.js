@@ -10,9 +10,9 @@ try {
     mkdirSync('dist', { recursive: true });
   }
   
-  // Build the client using clean vite config
+  // Build the client using npx to ensure vite is available
   console.log('📦 Building client...');
-  execSync('vite build --config vite.config.vercel.ts', { 
+  execSync('npx vite build --config vite.config.vercel.ts', { 
     stdio: 'inherit',
     cwd: process.cwd()
   });

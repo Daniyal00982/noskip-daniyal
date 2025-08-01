@@ -1,6 +1,7 @@
 {
-  "buildCommand": "node build-vercel.js",
+  "buildCommand": "npx vite build --config vite.config.vercel.ts",
   "outputDirectory": "dist/public",
+  "installCommand": "npm install",
   "rewrites": [
     {
       "source": "/((?!api).*)",
