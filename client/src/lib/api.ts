@@ -1,5 +1,5 @@
-// API configuration for Vercel deployment
-const API_BASE_URL = process.env.NODE_ENV === 'production' 
+// API configuration for development and production
+const API_BASE_URL = import.meta.env.PROD 
   ? 'https://your-app.vercel.app' 
   : 'http://localhost:5000';
 
@@ -13,13 +13,24 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
     },
   };
 
-  const response = await fetch(url, { ...defaultOptions, ...options });
-  
-  if (!response.ok) {
-    throw new Error(`API request failed: ${response.statusText}`);
+  console.log('Making API request to:', url, 'with options:', { ...defaultOptions, ...options });
+
+  try {
+    const response = await fetch(url, { ...defaultOptions, ...options });
+    
+    console.log('API Response:', response.status, response.statusText);
+    
+    if (!response.ok) {
+      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+    }
+    
+    const data = await response.json();
+    console.log('API Response data:', data);
+    return data;
+  } catch (error) {
+    console.error('API Request Error:', error);
+    throw error;
   }
-  
-  return response.json();
 };
 
 // Goal API functions
