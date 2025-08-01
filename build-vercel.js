@@ -1,29 +1,22 @@
-import { execSync } from 'child_process';
-import { copyFileSync, mkdirSync, existsSync } from 'fs';
-import { resolve } from 'path';
+#!/usr/bin/env node
 
-console.log('🚀 Building Noskip for Vercel deployment...');
+// Simple build script for Vercel deployment
+const { execSync } = require('child_process');
+const path = require('path');
+
+console.log('🚀 Starting Vercel build process...');
 
 try {
-  // Create dist directory if it doesn't exist
-  if (!existsSync('dist')) {
-    mkdirSync('dist', { recursive: true });
-  }
+  // Ensure we're in the right directory
+  process.chdir(__dirname);
   
-  // Build the client using npx to ensure vite is available
-  console.log('📦 Building client...');
-  execSync('npx vite build --config vite.config.vercel.ts', { 
-    stdio: 'inherit',
-    cwd: process.cwd()
-  });
-
-  // Copy package.json for deployment
-  console.log('📋 Copying package.json...');
-  copyFileSync('package.json', 'dist/package.json');
-
+  console.log('📦 Installing dependencies...');
+  execSync('npm install', { stdio: 'inherit' });
+  
+  console.log('🏗️  Building frontend with Vite...');
+  execSync('npx vite build --config vite.config.vercel.ts', { stdio: 'inherit' });
+  
   console.log('✅ Build completed successfully!');
-  console.log('📁 Static files ready in: dist/public');
-  console.log('🌐 API functions ready in: api/');
   
 } catch (error) {
   console.error('❌ Build failed:', error.message);
