@@ -14,10 +14,10 @@ export const queryClient = new QueryClient({
   },
 });
 
-// Default fetcher for react-query
-export const defaultQueryFn = async ({ queryKey }: { queryKey: string[] }) => {
-  const [url] = queryKey;
-  return apiRequest(url);
+// Default fetcher for react-query  
+export const defaultQueryFn = async (context: { queryKey: readonly unknown[] }) => {
+  const [url] = context.queryKey;
+  return apiRequest(url as string);
 };
 
 // Set default query function

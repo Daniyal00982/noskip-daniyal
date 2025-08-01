@@ -21,8 +21,10 @@ export default function SetupGoal() {
 
   const createGoalMutation = useMutation({
     mutationFn: async (goalData: { name: string; deadline: Date; reason?: string }) => {
-      const response = await apiRequest('POST', '/api/goals', goalData);
-      return response.json();
+      return apiRequest('/api/goals', {
+        method: 'POST',
+        body: JSON.stringify(goalData),
+      });
     },
     onSuccess: (data) => {
       setCurrentGoalId(data.id);
