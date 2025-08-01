@@ -1,10 +1,19 @@
 {
+  "functions": {
+    "api/**/*.ts": {
+      "runtime": "@vercel/node"
+    }
+  },
   "buildCommand": "npx vite build --config vite.config.vercel.ts",
   "outputDirectory": "dist/public",
   "installCommand": "npm install",
   "rewrites": [
     {
-      "source": "/((?!api).*)",
+      "source": "/api/(.*)",
+      "destination": "/api/$1"
+    },
+    {
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
