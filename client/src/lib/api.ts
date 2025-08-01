@@ -12,6 +12,7 @@ export const apiRequest = async (endpoint: string, options: RequestInit = {}) =>
   };
 
   console.log('Making API request to:', url, 'with options:', { ...defaultOptions, ...options });
+  console.log('Current window location:', window.location.href);
 
   try {
     const response = await fetch(url, { ...defaultOptions, ...options });
