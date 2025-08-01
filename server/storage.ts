@@ -211,7 +211,9 @@ export class MemStorage implements IStorage {
       ...insertSession,
       id,
       goalId: insertSession.goalId || null,
-      completedAt: new Date()
+      completedAt: new Date(),
+      distractionCount: insertSession.distractionCount ?? 0,
+      focusScore: insertSession.focusScore ?? 100
     };
     this.microSessions.set(id, session);
     return session;
@@ -242,7 +244,10 @@ export class MemStorage implements IStorage {
         ...insertEntry,
         id,
         goalId: insertEntry.goalId || null,
-        lastActiveDate: new Date()
+        lastActiveDate: new Date(),
+        streakCount: insertEntry.streakCount ?? 0,
+        totalDays: insertEntry.totalDays ?? 0,
+        isAnonymous: insertEntry.isAnonymous ?? true
       };
       this.leaderboardEntries.set(id, entry);
       return entry;
@@ -262,7 +267,10 @@ export class MemStorage implements IStorage {
       ...insertReward,
       id,
       goalId: insertReward.goalId || null,
-      unlockedAt: new Date()
+      unlockedAt: new Date(),
+      pointsEarned: insertReward.pointsEarned ?? 0,
+      badgeName: insertReward.badgeName ?? null,
+      claimed: insertReward.claimed ?? false
     };
     this.rewards.set(id, reward);
     return reward;
@@ -320,7 +328,11 @@ export class MemStorage implements IStorage {
     const session: FocusSession = {
       ...insertSession,
       id,
-      goalId: insertSession.goalId || null
+      goalId: insertSession.goalId || null,
+      endTime: insertSession.endTime ?? null,
+      actualDurationMinutes: insertSession.actualDurationMinutes ?? null,
+      distractionEvents: insertSession.distractionEvents ?? 0,
+      completionRate: insertSession.completionRate ?? 0
     };
     this.focusSessions.set(id, session);
     return session;
@@ -336,4 +348,9 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+import { DatabaseStorage } from './storage-db';
+
+// Use database storage in production, memory storage for development
+export const storage = process.env.NODE_ENV === 'production' 
+  ? new DatabaseStorage() 
+  : new MemStorage();
