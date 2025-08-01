@@ -1,0 +1,97 @@
+{name: 'LEARN CORE JAVA', deadline: Fri Aug 29 2025 05:30:00 GMT+0530 (India Standard Time), reason: undefined}
+index-CGomjwZN.js:32  POST http://localhost:5000/api/goals net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:1
+we @ index-CGomjwZN.js:1
+ko @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:297
+(anonymous) @ index-CGomjwZN.js:1
+we @ index-CGomjwZN.js:1
+mutationFn @ index-CGomjwZN.js:297
+fn @ index-CGomjwZN.js:32
+v @ index-CGomjwZN.js:32
+start @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:32
+o @ index-CGomjwZN.js:1
+Promise.then
+l @ index-CGomjwZN.js:1
+o @ index-CGomjwZN.js:1
+Promise.then
+l @ index-CGomjwZN.js:1
+(anonymous) @ index-CGomjwZN.js:1
+we @ index-CGomjwZN.js:1
+execute @ index-CGomjwZN.js:32
+mutate @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:32
+m @ index-CGomjwZN.js:297
+V @ vendor-CpV_BwH8.js:55
+Th @ vendor-CpV_BwH8.js:55
+hf @ vendor-CpV_BwH8.js:55
+sC @ vendor-CpV_BwH8.js:55
+Fm @ vendor-CpV_BwH8.js:67
+aT @ vendor-CpV_BwH8.js:67
+jm @ vendor-CpV_BwH8.js:67
+rT @ vendor-CpV_BwH8.js:67
+(anonymous) @ vendor-CpV_BwH8.js:67
+wp @ vendor-CpV_BwH8.js:151
+Eh @ vendor-CpV_BwH8.js:55
+md @ vendor-CpV_BwH8.js:67
+UE @ vendor-CpV_BwH8.js:55
+td @ vendor-CpV_BwH8.js:55
+ME @ vendor-CpV_BwH8.js:55
+index-CGomjwZN.js:32  POST http://localhost:5000/api/goals net::ERR_BLOCKED_BY_CLIENT
+(anonymous) @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:1
+we @ index-CGomjwZN.js:1
+ko @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:297
+(anonymous) @ index-CGomjwZN.js:1
+we @ index-CGomjwZN.js:1
+mutationFn @ index-CGomjwZN.js:297
+fn @ index-CGomjwZN.js:32
+v @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:32
+Promise.then
+(anonymous) @ index-CGomjwZN.js:32
+Promise.catch
+v @ index-CGomjwZN.js:32
+start @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:32
+o @ index-CGomjwZN.js:1
+Promise.then
+l @ index-CGomjwZN.js:1
+o @ index-CGomjwZN.js:1
+Promise.then
+l @ index-CGomjwZN.js:1
+(anonymous) @ index-CGomjwZN.js:1
+we @ index-CGomjwZN.js:1
+execute @ index-CGomjwZN.js:32
+mutate @ index-CGomjwZN.js:32
+(anonymous) @ index-CGomjwZN.js:32
+m @ index-CGomjwZN.js:297
+V @ vendor-CpV_BwH8.js:55
+Th @ vendor-CpV_BwH8.js:55
+hf @ vendor-CpV_BwH8.js:55
+sC @ vendor-CpV_BwH8.js:55
+Fm @ vendor-CpV_BwH8.js:67
+aT @ vendor-CpV_BwH8.js:67
+jm @ vendor-CpV_BwH8.js:67
+rT @ vendor-CpV_BwH8.js:67
+(anonymous) @ vendor-CpV_BwH8.js:67
+wp @ vendor-CpV_BwH8.js:151
+Eh @ vendor-CpV_BwH8.js:55
+md @ vendor-CpV_BwH8.js:67
+UE @ vendor-CpV_BwH8.js:55
+td @ vendor-CpV_BwH8.js:55
+ME @ vendor-CpV_BwH8.js:55
+index-CGomjwZN.js:297 Goal creation error: TypeError: Failed to fetch
+    at Object.<anonymous> (index-CGomjwZN.js:32:45858)
+    at Generator.next (<anonymous>)
+    at index-CGomjwZN.js:1:1332
+    at new Promise (<anonymous>)
+    at we (index-CGomjwZN.js:1:1152)
+    at ko (index-CGomjwZN.js:32:45736)
+    at index-CGomjwZN.js:297:63723
+    at Generator.next (<anonymous>)
+    at index-CGomjwZN.js:1:1332
+    at new Promise (<anonymous>)

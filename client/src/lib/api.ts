@@ -1,7 +1,7 @@
-// API configuration for development and production
+// API configuration for development and production  
 const API_BASE_URL = import.meta.env.PROD 
   ? 'https://your-app.vercel.app' 
-  : 'http://localhost:5000';
+  : '';
 
 export const apiRequest = async (endpoint: string, options: RequestInit = {}) => {
   const url = `${API_BASE_URL}${endpoint}`;
