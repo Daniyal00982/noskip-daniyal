@@ -2,8 +2,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
-// Use a more compatible approach for __dirname in ES modules
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+// Simple cross-platform __dirname solution
+const __dirname = path.dirname(new URL(import.meta.url).pathname).replace(/^\/([A-Z]:)/, '$1');
 
 export default defineConfig({
   plugins: [react()],
@@ -18,7 +18,9 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
-    target: 'esnext',
+    target: 'es2015',
+    sourcemap: false,
+    minify: 'esbuild',
     rollupOptions: {
       output: {
         manualChunks: {
@@ -27,6 +29,9 @@ export default defineConfig({
         },
       },
     },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
   },
   server: {
     port: 3000,
