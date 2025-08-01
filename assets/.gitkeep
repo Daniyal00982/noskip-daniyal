@@ -1,0 +1,2 @@
+# This directory is for static assets
+# Referenced in vite.config as @assets alias
